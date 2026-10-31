@@ -5,3 +5,4 @@ dist/
 .vs/
 .zcode/
 tools/uatest-*.ps1
+tools/punct-*.ps1
