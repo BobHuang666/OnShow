@@ -43,6 +43,27 @@ public class JsonTests
     }
 
     [Fact]
+    public void Roundtrip_NaN_Position_Saves_And_Loads()
+    {
+        // 回归:WindowConfig.X/Y 默认 NaN,System.Text.Json 默认拒绝序列化 NaN,
+        // 曾导致整份 config.json 保存静默失败(EULA 同意记录/跳过版本等全部丢失)。
+        var path = Path.Combine(Path.GetTempPath(), $"onshow-nan-{Guid.NewGuid():N}.json");
+        try
+        {
+            var config = new AppConfig { AgreementAcceptedVersion = 1, SkippedVersion = "1.1.0" };
+            Json.Save(path, config);
+            var loaded = Json.Load<AppConfig>(path);
+            Assert.Equal(1, loaded.AgreementAcceptedVersion);
+            Assert.Equal("1.1.0", loaded.SkippedVersion);
+            Assert.True(double.IsNaN(loaded.Window.X));
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
     public void Load_Corrupt_File_Does_Not_Throw()
     {
         var path = Path.Combine(Path.GetTempPath(), $"onshow-bad-{Guid.NewGuid():N}.json");

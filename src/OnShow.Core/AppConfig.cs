@@ -21,6 +21,18 @@ public class AppConfig
 
     /// <summary>DDL 临期提醒阈值,逐条可覆盖。</summary>
     public bool DdlRemindersEnabled { get; set; } = true;
+
+    /// <summary>已同意的用户协议版本(0 = 尚未同意,下次启动弹协议窗口)。</summary>
+    public int AgreementAcceptedVersion { get; set; }
+
+    /// <summary>自动检查更新(启动后延迟检查一次,24 小时节流)。</summary>
+    public bool AutoCheckUpdate { get; set; } = true;
+
+    /// <summary>上次检查更新的 UTC 时间(ISO8601),用于 24h 节流。</summary>
+    public string? LastUpdateCheckUtc { get; set; }
+
+    /// <summary>用户选择「跳过此版本」的版本号(如 1.1.0),自动检查不再提示该版本。</summary>
+    public string? SkippedVersion { get; set; }
 }
 
 public class WindowConfig

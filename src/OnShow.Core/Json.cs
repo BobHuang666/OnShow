@@ -12,6 +12,10 @@ public static class Json
         WriteIndented = true,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+
+        // WindowConfig.X/Y 以 NaN 表示「首次运行」;System.Text.Json 默认拒绝 NaN,会导致整份配置保存失败
+        NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals,
+
         Converters = { new JsonStringEnumConverter() },
     };
 

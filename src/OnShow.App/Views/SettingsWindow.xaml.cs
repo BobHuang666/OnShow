@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using OnShow.App.Services;
 using OnShow.Cards.Ddl;
 using OnShow.Cards.Token;
 using OnShow.Core;
@@ -28,6 +29,10 @@ public partial class SettingsWindow : Window
         OpacitySlider.Value = Math.Clamp(_config.Window.Opacity, 0.5, 1);
         OpacityValue.Text = $"{OpacitySlider.Value * 100:N0}%";
         SelectPoll(_config.TokenPollMinutes);
+
+        NavVersion.Text = "v" + AppMeta.CurrentVersionString;
+        AboutTitle.Text = $"OnShow v{AppMeta.CurrentVersionString}";
+        AutoUpdateBox.IsChecked = _config.AutoCheckUpdate;
 
         RefreshDdlList();
         RefreshAccountList();
@@ -202,6 +207,18 @@ public partial class SettingsWindow : Window
         => _ = App.Instance.TokenCard.RefreshAsync();
 
     // ---------- 关于 ----------
+
+    void OnAutoUpdateChanged(object sender, RoutedEventArgs e)
+    {
+        if (_config is null || AutoUpdateBox.IsChecked is null) return;
+        _config.AutoCheckUpdate = AutoUpdateBox.IsChecked.Value;
+    }
+
+    void OnCheckUpdate(object sender, RoutedEventArgs e) => App.Instance.CheckForUpdateInteractive(this);
+
+    void OnFeedback(object sender, RoutedEventArgs e) => App.Instance.OpenFeedback(this);
+
+    void OnOpenAbout(object sender, RoutedEventArgs e) => App.Instance.OpenAbout();
 
     void OnOpenDataFolder(object sender, RoutedEventArgs e)
     {

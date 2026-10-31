@@ -1,7 +1,9 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using OnShow.App.Interop;
+using OnShow.App.Services;
 using OnShow.App.Views;
 using OnShow.Cards.Ddl;
 using OnShow.Cards.Token;
@@ -23,8 +25,11 @@ public partial class App : Application
     Mutex? _mutex;
     FlyoutWindow? _flyout;
     SettingsWindow? _settings;
+    AboutWindow? _about;
+    FeedbackWindow? _feedback;
     Services.CardHost? _host;
     ContextMenu? _trayMenu;
+    bool _checkingUpdate;
 
     /// <summary>托盘右键菜单是否处于打开状态(hover 快览需让位)。</summary>
     public bool TrayMenuOpen => _trayMenu is { IsOpen: true };
@@ -38,6 +43,18 @@ public partial class App : Application
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+
+        // 更新安装器:新版本 exe 以 --apply-update <目标> 启动(此刻旧实例仍持有单实例互斥锁),
+        // 必须在获取互斥锁之前接管,完成等待-覆盖-重启后直接退出。
+        for (var i = 0; i < e.Args.Length - 1; i++)
+        {
+            if (e.Args[i].Equals("--apply-update", StringComparison.OrdinalIgnoreCase))
+            {
+                ApplyUpdateRunner.Run(e.Args[i + 1]);
+                Shutdown(0);
+                return;
+            }
+        }
 
         _mutex = new Mutex(true, @"Local\OnShow.SingleInstance", out var fresh);
         if (!fresh)
@@ -59,6 +76,22 @@ public partial class App : Application
         Log.Info($"OnShow 启动 args=[{string.Join(' ', e.Args)}]");
 
         Config = Json.Load<AppConfig>(AppPaths.ConfigFile);
+
+        // 首次启动 / 协议文本版本升级:先取得同意,拒绝则直接退出
+        if (Config.AgreementAcceptedVersion < AppMeta.AgreementVersion)
+        {
+            Log.Info("展示用户协议窗口");
+            var eula = new EulaWindow();
+            if (eula.ShowDialog() != true)
+            {
+                Log.Info("未同意用户协议,退出");
+                Shutdown(0);
+                return;
+            }
+            Config.AgreementAcceptedVersion = AppMeta.AgreementVersion;
+            SaveConfig();
+        }
+
         StateStore = new CardStateStore();
         _host = new Services.CardHost(this);
 
@@ -84,6 +117,89 @@ public partial class App : Application
         // 自测入口:--settings 启动即打开设置窗口(用于自动化冒烟验证)
         if (e.Args.Any(a => a.Equals("--settings", StringComparison.OrdinalIgnoreCase)))
             OpenSettings();
+
+        MaybeAutoCheckUpdate();
+    }
+
+    // ---------- 更新 / 反馈 / 关于 ----------
+
+    /// <summary>定时自动检查更新:24 小时节流,静默失败,命中「跳过此版本」不弹窗。</summary>
+    void MaybeAutoCheckUpdate()
+    {
+        if (!Config.AutoCheckUpdate) return;
+        if (DateTime.TryParse(Config.LastUpdateCheckUtc, CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var last)
+            && DateTime.UtcNow - last < TimeSpan.FromHours(24)) return;
+
+        var skipped = Config.SkippedVersion;
+        _ = Task.Run(async () =>
+        {
+            GitHubReleaseInfo? release = null;
+            try
+            {
+                await Task.Delay(TimeSpan.FromSeconds(30));   // 启动后错峰,不与初始化抢网络
+                release = await UpdateCheck.CheckLatestAsync(AppMeta.LatestReleaseApiUrl);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("后台检查更新失败(静默):" + ex.Message);
+            }
+
+            Config.LastUpdateCheckUtc = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+            _ = Dispatcher.BeginInvoke(SaveConfig);
+
+            if (release is null || !UpdateHelper.IsNewer(release.TagName, AppMeta.CurrentVersion)) return;
+            if (release.TagName.TrimStart('v', 'V') == skipped) return;
+
+            _ = Dispatcher.BeginInvoke(() => new UpdateWindow(release).Show());
+        });
+    }
+
+    /// <summary>手动检查更新(托盘 / 设置 / 关于入口),结果一律有反馈。</summary>
+    public async void CheckForUpdateInteractive(Window? owner)
+    {
+        if (_checkingUpdate) return;
+        _checkingUpdate = true;
+        try
+        {
+            var release = await UpdateCheck.CheckLatestAsync(AppMeta.LatestReleaseApiUrl);
+            Config.LastUpdateCheckUtc = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
+            SaveConfig();
+            if (release is null || !UpdateHelper.IsNewer(release.TagName, AppMeta.CurrentVersion))
+            {
+                Dialog.Info(owner, "检查更新", $"当前已是最新版本 v{AppMeta.CurrentVersionString}。", "success");
+            }
+            else
+            {
+                new UpdateWindow(release) { Owner = owner }.Show();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("检查更新失败", ex);
+            Dialog.Warn(owner, "检查更新失败",
+                "无法连接 GitHub:" + ex.Message +
+                "\n\n提示:国内网络访问 GitHub 可能不稳定,请稍后重试,或到项目主页手动下载。");
+        }
+        finally
+        {
+            _checkingUpdate = false;
+        }
+    }
+
+    public void OpenFeedback(Window? owner = null)
+    {
+        if (_feedback is { IsLoaded: true }) { _feedback.Activate(); return; }
+        _feedback = new FeedbackWindow();
+        if (owner is not null) _feedback.Owner = owner;
+        _feedback.Show();
+    }
+
+    public void OpenAbout()
+    {
+        if (_about is { IsLoaded: true }) { _about.Activate(); return; }
+        _about = new AboutWindow();
+        _about.Show();
     }
 
     // ---------- Widget / 托盘动作 ----------
@@ -144,6 +260,20 @@ public partial class App : Application
         var mSettings = new MenuItem { Header = "设置…" };
         mSettings.Click += (_, _) => OpenSettings();
         menu.Items.Add(mSettings);
+
+        menu.Items.Add(new Separator());
+
+        var mUpdate = new MenuItem { Header = "检查更新…" };
+        mUpdate.Click += (_, _) => CheckForUpdateInteractive(null);
+        menu.Items.Add(mUpdate);
+
+        var mFeedback = new MenuItem { Header = "反馈…" };
+        mFeedback.Click += (_, _) => OpenFeedback();
+        menu.Items.Add(mFeedback);
+
+        var mAbout = new MenuItem { Header = "关于 OnShow…" };
+        mAbout.Click += (_, _) => OpenAbout();
+        menu.Items.Add(mAbout);
 
         var mAuto = new MenuItem { Header = "开机自启动", IsCheckable = true, IsChecked = Config.AutoStart };
         mAuto.Click += (_, _) => SetAutoStart(mAuto.IsChecked);
