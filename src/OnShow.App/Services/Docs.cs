@@ -16,7 +16,7 @@ internal static class Docs
     static string LoadText(string packUri)
     {
         var sri = Application.GetResourceStream(new Uri(packUri, UriKind.Absolute))
-                  ?? throw new FileNotFoundException("内嵌资源缺失:" + packUri);
+                  ?? throw new FileNotFoundException("内嵌资源缺失：" + packUri);
         using var reader = new StreamReader(sri.Stream);
         return reader.ReadToEnd();
     }

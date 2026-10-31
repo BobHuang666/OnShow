@@ -110,7 +110,7 @@ public sealed class ZhipuProvider : ITokenProvider
             return new TokenSnapshot(a.Id, SnapshotKind.Balance, "", remaining, null, null, null, null, DateTime.Now);
 
         Log.Info($"[zhipu] 响应格式未识别:{Http.Trunc(body, 400)}");
-        return TokenSnapshot.Fail(a.Id, "响应格式未识别,详见日志");
+        return TokenSnapshot.Fail(a.Id, "响应格式未识别，详见日志");
     }
 }
 
@@ -126,12 +126,12 @@ public sealed class XunfeiProvider : ITokenProvider
     public string DisplayName => "讯飞星火 MaaS";
     public string DefaultBaseUrl => "https://maas.xfyun.cn";
     public string DefaultConsoleUrl => "https://maas.xfyun.cn/usageStatistics?ch=xcgzh_x26";
-    public IReadOnlyList<CredField> CredentialFields { get; } = new[] { new CredField("cookie", "Cookie(从浏览器复制完整串)", true) };
+    public IReadOnlyList<CredField> CredentialFields { get; } = new[] { new CredField("cookie", "Cookie（从浏览器复制完整串）", true) };
 
     public async Task<TokenSnapshot> FetchAsync(TokenAccount a, IReadOnlyDictionary<string, string> cred, CancellationToken ct)
     {
         var (cookie, headers, baseUrl) = Prepare(a, cred);
-        if (cookie is null) return TokenSnapshot.Fail(a.Id, "未配置 Cookie(浏览器 F12 复制)");
+        if (cookie is null) return TokenSnapshot.Fail(a.Id, "未配置 Cookie（浏览器 F12 复制）");
 
         // channel 从 usage 接口首行 modelId 动态获取;失败回退默认
         var channel = "spark-x2.6";
@@ -255,7 +255,7 @@ public sealed class ZaiProvider : ITokenProvider
         if (!root.TryGetProperty("data", out var data) || !data.TryGetProperty("limits", out var limits))
         {
             Log.Info($"[zai] 响应缺 data.limits:{Http.Trunc(rawBody ?? root.GetRawText(), 300)}");
-            return TokenSnapshot.Fail(accountId, "响应缺 limits,详见日志");
+            return TokenSnapshot.Fail(accountId, "响应缺 limits，详见日志");
         }
 
         decimal? tokenPct = null, timePct = null;
@@ -272,7 +272,7 @@ public sealed class ZaiProvider : ITokenProvider
         if (pct is null)
         {
             Log.Info($"[zai] limits 中无百分比:{Http.Trunc(rawBody ?? root.GetRawText(), 300)}");
-            return TokenSnapshot.Fail(accountId, "响应无用量百分比,详见日志");
+            return TokenSnapshot.Fail(accountId, "响应无用量百分比，详见日志");
         }
 
         return new TokenSnapshot(accountId, SnapshotKind.Quota, "", null,

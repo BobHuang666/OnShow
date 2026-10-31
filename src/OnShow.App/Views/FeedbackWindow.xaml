@@ -6,8 +6,8 @@
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="12" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1" Margin="10"
+    <Border CornerRadius="12" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorderStrong}" BorderThickness="1" Margin="10"
             MouseLeftButtonDown="OnDragAreaMouseDown">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Opacity="0.5"/>
@@ -16,14 +16,14 @@
 
             <StackPanel Orientation="Horizontal">
                 <Border Width="32" Height="32" CornerRadius="9"
-                        Background="{StaticResource BrushAccentDim}" VerticalAlignment="Center">
+                        Background="{DynamicResource BrushAccentDim}" VerticalAlignment="Center">
                     <TextBlock Text="💬" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="反馈问题 / 建议" FontSize="15" FontWeight="Bold"
-                               Foreground="{StaticResource BrushFg1}"/>
-                    <TextBlock Text="你的反馈会直接送达开发者,感谢帮助 OnShow 变得更好" FontSize="11"
-                               Foreground="{StaticResource BrushFg2}" Margin="0,2,0,0"/>
+                               Foreground="{DynamicResource BrushFg1}"/>
+                    <TextBlock Text="你的反馈会直接送达开发者，感谢帮助 OnShow 变得更好" FontSize="11"
+                               Foreground="{DynamicResource BrushFg2}" Margin="0,2,0,0"/>
                 </StackPanel>
             </StackPanel>
 
@@ -38,7 +38,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="截图(最多 3 张,可选)"/>
+                    <Label Content="截图（最多 3 张，可选）"/>
                     <Button x:Name="AddShotBtn" Content="＋ 添加截图" FontSize="11" Padding="10,4"
                             VerticalAlignment="Center" Click="OnAddShots"/>
                 </StackPanel>
@@ -51,8 +51,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid Width="92" Height="92" Margin="0,6,8,0">
-                                <Border CornerRadius="8" BorderBrush="{StaticResource BrushBorderStrong}"
-                                        BorderThickness="1" Background="{StaticResource BrushRow}">
+                                <Border CornerRadius="8" BorderBrush="{DynamicResource BrushBorderStrong}"
+                                        BorderThickness="1" Background="{DynamicResource BrushRow}">
                                     <Image Source="{Binding Thumb}" Stretch="Uniform" Margin="4"/>
                                 </Border>
                                 <Button Content="✕" FontSize="10" Padding="0" Width="20" Height="20"
@@ -64,16 +64,16 @@
                 </ItemsControl>
             </Grid>
 
-            <CheckBox x:Name="EnvBox" Content="附带版本与系统信息(便于定位问题)" Margin="0,14,0,0"
+            <CheckBox x:Name="EnvBox" Content="附带版本与系统信息（便于定位问题）" Margin="0,14,0,0"
                       IsChecked="True"/>
 
-            <TextBlock Foreground="{StaticResource BrushFg2}" FontSize="11" TextWrapping="Wrap"
+            <TextBlock Foreground="{DynamicResource BrushFg2}" FontSize="11" TextWrapping="Wrap"
                        LineHeight="17" Margin="0,10,0,0"
-                       Text="🔒 反馈仅包含以上内容:你填写的文字、所选截图、版本信息;绝不包含密钥存储(tokens.dat)与配置文件。"/>
+                       Text="🔒 反馈仅包含以上内容：你填写的文字、所选截图、版本信息；绝不包含密钥存储（tokens.dat）与配置文件。"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
                 <Button Content="导出反馈包" Click="OnExportPack" Margin="0,0,9,0"
-                        ToolTip="没有 GitHub 账号时,导出 zip 通过邮件发送给开发者"/>
+                        ToolTip="没有 GitHub 账号时，导出 zip 通过邮件发送给开发者"/>
                 <Button Content="取消" IsCancel="True" Click="OnCancel" Margin="0,0,9,0"/>
                 <Button Content="提交到 GitHub" Style="{StaticResource BtnPrimary}"
                         Click="OnSubmit" MinWidth="110"/>

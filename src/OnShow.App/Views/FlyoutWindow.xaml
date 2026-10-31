@@ -7,8 +7,8 @@
         ShowInTaskbar="False" ShowActivated="False" Topmost="True"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="10" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
+    <Border CornerRadius="10" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorder}" BorderThickness="1">
         <Border.Effect>
             <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.45"/>
         </Border.Effect>

@@ -60,7 +60,7 @@ public partial class UpdateWindow : Window
             var newExe = await Task.Run(() =>
                 UpdateService.DownloadAndPrepareAsync(_release, progress, _cts.Token, mirror));
 
-            StatusText.Text = "校验通过,即将重启并安装新版本…";
+            StatusText.Text = "校验通过，即将重启并安装新版本…";
             await Task.Delay(500);
             UpdateService.LaunchApply(newExe);
             App.Instance.ExitApp();

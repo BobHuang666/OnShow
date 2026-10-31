@@ -4,7 +4,7 @@
         xmlns:app="clr-namespace:OnShow.App"
         Title="OnShow 设置" Width="680" Height="580"
         WindowStyle="SingleBorderWindow" ResizeMode="NoResize"
-        Background="{StaticResource BrushWindowBg}" WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushWindowBg}" WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
     <Grid Margin="20,18">
@@ -16,9 +16,9 @@
         <!-- ===== 导航 ===== -->
         <StackPanel>
             <StackPanel Orientation="Horizontal" Margin="8,2,0,14">
-                <Ellipse Width="9" Height="9" Fill="{StaticResource BrushAccent}" Margin="0,0,8,0"
+                <Ellipse Width="9" Height="9" Fill="{DynamicResource BrushAccent}" Margin="0,0,8,0"
                          VerticalAlignment="Center"/>
-                <TextBlock Text="OnShow" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushFg1}"/>
+                <TextBlock Text="OnShow" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushFg1}"/>
             </StackPanel>
             <ListBox x:Name="NavList" SelectionChanged="OnNavChanged">
                 <ListBoxItem Content="⚙  通用" IsSelected="True" Padding="12,9"/>
@@ -26,22 +26,24 @@
                 <ListBoxItem Content="🔑  Token 账户" Padding="12,9"/>
                 <ListBoxItem Content="ℹ  关于" Padding="12,9"/>
             </ListBox>
-            <TextBlock x:Name="NavVersion" Text="v1.1.0" FontSize="10" Foreground="{StaticResource BrushFg2}"
+            <TextBlock x:Name="NavVersion" Text="v1.1.0" FontSize="10" Foreground="{DynamicResource BrushFg2}"
                        Margin="12,10,0,0"/>
         </StackPanel>
 
-        <!-- ===== 内容 ===== -->
-        <Grid Grid.Column="1" Margin="18,0,4,0">
+        <!-- ===== 内容(可滚动) ===== -->
+        <ScrollViewer Grid.Column="1" Margin="18,0,10,0" VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+        <Grid>
 
             <!-- 通用 -->
             <StackPanel x:Name="PageGeneral">
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="桌面与外观" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushFg1}" Margin="0,0,0,10"/>
+                                   Foreground="{DynamicResource BrushFg1}" Margin="0,0,0,10"/>
                         <Label Content="桌面模式"/>
                         <ComboBox x:Name="ModeBox" Height="34" Margin="0,5,0,14" SelectionChanged="OnModeChanged">
-                            <ComboBoxItem Content="桌面前置(图标之上、应用之下)"/>
+                            <ComboBoxItem Content="桌面前置（图标之上、应用之下）"/>
                             <ComboBoxItem Content="始终置顶"/>
                         </ComboBox>
                         <Grid Margin="0,0,0,14">
@@ -57,23 +59,25 @@
                             </StackPanel>
                             <TextBlock x:Name="OpacityValue" Grid.Column="1" Text="96%"
                                        FontSize="13" FontWeight="SemiBold"
-                                       Foreground="{StaticResource BrushAccent}"
+                                       Foreground="{DynamicResource BrushAccent}"
                                        VerticalAlignment="Bottom" Margin="10,0,2,4"/>
                         </Grid>
-                        <CheckBox x:Name="LockBox" Content="锁定位置(禁用拖动)"
+                        <CheckBox x:Name="LockBox" Content="锁定位置（禁用拖动）"
                                   Checked="OnFlagChanged" Unchecked="OnFlagChanged"/>
                         <CheckBox x:Name="FlyoutBox" Content="托盘图标悬停显示快览面板" Margin="0,9,0,0"
                                   Checked="OnFlagChanged" Unchecked="OnFlagChanged"/>
+                        <Label Content="面板背景" Margin="0,12,0,0"/>
+                        <WrapPanel x:Name="BgSwatches" Margin="0,2,0,0"/>
                     </StackPanel>
                 </Border>
 
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="启动" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushFg1}" Margin="0,0,0,10"/>
-                        <CheckBox x:Name="AutoStartBox" Content="开机自启动(仅托盘,不弹窗)"
+                                   Foreground="{DynamicResource BrushFg1}" Margin="0,0,0,10"/>
+                        <CheckBox x:Name="AutoStartBox" Content="开机自启动（仅托盘，不弹窗）"
                                   Checked="OnAutoStartChanged" Unchecked="OnAutoStartChanged"/>
-                        <CheckBox x:Name="LaunchMinBox" Content="启动时只在托盘(不显示 Widget)" Margin="0,9,0,0"
+                        <CheckBox x:Name="LaunchMinBox" Content="启动时只在托盘（不显示 Widget）" Margin="0,9,0,0"
                                   Checked="OnFlagChanged" Unchecked="OnFlagChanged"/>
                     </StackPanel>
                 </Border>
@@ -81,7 +85,7 @@
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="Token 轮询" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushFg1}" Margin="0,0,0,10"/>
+                                   Foreground="{DynamicResource BrushFg1}" Margin="0,0,0,10"/>
                         <Label Content="刷新间隔"/>
                         <ComboBox x:Name="PollBox" Height="34" Width="180" HorizontalAlignment="Left"
                                   Margin="0,5,0,0" SelectionChanged="OnPollChanged">
@@ -119,8 +123,8 @@
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding Title}" FontWeight="SemiBold" Margin="0,0,10,0"
                                                TextTrimming="CharacterEllipsis" MaxWidth="220"/>
-                                    <TextBlock Text="{Binding DueText}" Foreground="{StaticResource BrushFg2}"/>
-                                    <TextBlock Text="(已完成)" Foreground="{StaticResource BrushOver}"
+                                    <TextBlock Text="{Binding DueText}" Foreground="{DynamicResource BrushFg2}"/>
+                                    <TextBlock Text="（已完成）" Foreground="{DynamicResource BrushOver}"
                                                Visibility="{Binding Done, Converter={x:Static app:BoolToVisibilityConverter.Instance}}"/>
                                 </StackPanel>
                                 <TextBlock Grid.Column="1" Text="{Binding RemainText}" FontWeight="SemiBold"/>
@@ -163,11 +167,11 @@
                                            Margin="12,0,0,0"/>
                                 <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
                                     <TextBlock Text="{Binding ProviderName}" FontSize="10"
-                                               Foreground="{StaticResource BrushFg2}"
+                                               Foreground="{DynamicResource BrushFg2}"
                                                Visibility="{Binding ProviderNameVisible, Converter={x:Static app:BoolToVisibilityConverter.Instance}}"/>
                                 </StackPanel>
                                 <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding ErrorText}" FontSize="11"
-                                           Foreground="{StaticResource BrushUrgent}" Margin="12,1,0,0"
+                                           Foreground="{DynamicResource BrushUrgent}" Margin="12,1,0,0"
                                            TextTrimming="CharacterEllipsis" MaxWidth="320"
                                            HorizontalAlignment="Right"
                                            ToolTip="{Binding ErrorText}"/>
@@ -182,39 +186,36 @@
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock x:Name="AboutTitle" Text="OnShow v1.1.0" FontSize="18" FontWeight="Bold"
-                                   Foreground="{StaticResource BrushAccent}" Margin="0,0,0,8"/>
-                        <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
-                                   Text="桌面常驻信息小部件:DDL 倒计时 + Token 集成监控。&#x0a;数据与配置保存在 %APPDATA%\OnShow,密钥经 DPAPI 加密;无任何遥测。"/>
-                        <CheckBox x:Name="AutoUpdateBox" Content="自动检查更新(每 24 小时一次)"
+                                   Foreground="{DynamicResource BrushAccent}" Margin="0,0,0,8"/>
+                        <TextBlock Foreground="{DynamicResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
+                                   Text="桌面常驻信息小部件：DDL 倒计时 + Token 集成监控。&#x0a;#x0a;数据与配置保存在 %APPDATA%\OnShow，密钥经 DPAPI 加密；无任何遥测。"/>
+                        <CheckBox x:Name="AutoUpdateBox" Content="自动检查更新（每 24 小时一次）"
                                   Margin="0,12,0,0" Checked="OnAutoUpdateChanged" Unchecked="OnAutoUpdateChanged"/>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                             <Button Content="检查更新" Style="{StaticResource BtnPrimary}" Click="OnCheckUpdate" Margin="0,0,9,0"/>
                             <Button Content="反馈问题" Click="OnFeedback" Margin="0,0,9,0"/>
-                            <Button Content="更新日志 / 用户协议" Click="OnOpenAbout"/>
+                            <Button Content="更新日志 / 用户协议" Click="OnOpenAbout" Margin="0,0,9,0"/>
+                            <Button Content="项目主页" Click="OnOpenRepo"/>
                         </StackPanel>
                         <Label Content="下载加速镜像" Margin="0,14,0,0"/>
                         <TextBox x:Name="MirrorBox" Height="36" VerticalContentAlignment="Center"
                                  TextChanged="OnMirrorChanged"/>
-                        <TextBlock FontSize="11" Foreground="{StaticResource BrushOver}" Margin="0,5,0,0"
+                        <TextBlock FontSize="11" Foreground="{DynamicResource BrushOver}" Margin="0,5,0,0"
                                    TextWrapping="Wrap"
-                                   Text="镜像只加速下载,完整性由 SHA256 校验保证;失效时更换前缀或留空直连。"/>
-                        <Label Content="面板背景" Margin="0,14,0,0"/>
-                        <WrapPanel x:Name="BgSwatches" Margin="0,2,0,0"/>
-                        <TextBlock FontSize="11" Foreground="{StaticResource BrushOver}" Margin="0,5,0,0"
-                                   TextWrapping="Wrap"
-                                   Text="浅色背景会自动切换为深色文字。"/>
+                                   Text="镜像只加速下载，完整性由 SHA256 校验保证；失效时更换前缀或留空直连。"/>
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Text="接口适配提示" FontSize="13" FontWeight="SemiBold"
-                                   Foreground="{StaticResource BrushWarn}" Margin="0,0,0,8"/>
-                        <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
-                                   Text="智谱与讯飞为非公开文档接口,「测试连接」失败时请通过反馈窗口告知响应情况,注意脱敏。"/>
+                                   Foreground="{DynamicResource BrushWarn}" Margin="0,0,0,8"/>
+                        <TextBlock Foreground="{DynamicResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
+                                   Text="智谱与讯飞为非公开文档接口，「测试连接」失败时请通过反馈窗口告知响应情况，注意脱敏。"/>
                     </StackPanel>
                 </Border>
                 <Button Content="打开数据目录" HorizontalAlignment="Left" Click="OnOpenDataFolder"/>
             </StackPanel>
         </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>

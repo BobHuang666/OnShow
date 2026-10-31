@@ -7,8 +7,8 @@
         ShowInTaskbar="False" Topmost="True" Closing="OnClosing"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="12" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1" Margin="10"
+    <Border CornerRadius="12" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorderStrong}" BorderThickness="1" Margin="10"
             MouseLeftButtonDown="OnDragAreaMouseDown">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Opacity="0.5"/>
@@ -23,20 +23,20 @@
 
             <StackPanel Orientation="Horizontal">
                 <Border Width="32" Height="32" CornerRadius="9"
-                        Background="{StaticResource BrushAccentDim}" VerticalAlignment="Center">
-                    <TextBlock Text="⬆" FontSize="15" FontWeight="Bold" Foreground="{StaticResource BrushAccent}"
+                        Background="{DynamicResource BrushAccentDim}" VerticalAlignment="Center">
+                    <TextBlock Text="⬆" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="发现新版本" FontSize="15" FontWeight="Bold"
-                               Foreground="{StaticResource BrushFg1}"/>
+                               Foreground="{DynamicResource BrushFg1}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
-                        <TextBlock x:Name="VersionLine" FontSize="12" Foreground="{StaticResource BrushFg2}"/>
+                        <TextBlock x:Name="VersionLine" FontSize="12" Foreground="{DynamicResource BrushFg2}"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
 
-            <Border Grid.Row="1" Margin="0,14,0,10" Background="{StaticResource BrushCard}"
+            <Border Grid.Row="1" Margin="0,14,0,10" Background="{DynamicResource BrushCard}"
                     CornerRadius="10" Padding="14,8" Height="220">
                 <FlowDocumentScrollViewer x:Name="NotesViewer" VerticalScrollBarVisibility="Auto"
                                           Background="Transparent"/>
@@ -45,7 +45,7 @@
             <StackPanel Grid.Row="2" Margin="0,0,0,12">
                 <ProgressBar x:Name="Progress" Height="5" Minimum="0" Maximum="100"
                              Background="#1FFFFFFF" BorderThickness="0"
-                             Foreground="{StaticResource BrushAccent}">
+                             Foreground="{DynamicResource BrushAccent}">
                     <ProgressBar.Template>
                         <ControlTemplate TargetType="ProgressBar">
                             <Grid>
@@ -57,7 +57,7 @@
                         </ControlTemplate>
                     </ProgressBar.Template>
                 </ProgressBar>
-                <TextBlock x:Name="StatusText" FontSize="11" Foreground="{StaticResource BrushFg2}"
+                <TextBlock x:Name="StatusText" FontSize="11" Foreground="{DynamicResource BrushFg2}"
                            Margin="0,6,0,0" TextTrimming="CharacterEllipsis"/>
             </StackPanel>
 

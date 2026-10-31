@@ -7,8 +7,8 @@
         WindowStartupLocation="CenterOwner" Topmost="True"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="12" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1" Margin="10"
+    <Border CornerRadius="12" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorderStrong}" BorderThickness="1" Margin="10"
             MouseLeftButtonDown="OnDragAreaMouseDown">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Opacity="0.5"/>
@@ -16,19 +16,19 @@
         <StackPanel Margin="20,18">
             <StackPanel Orientation="Horizontal">
                 <Border x:Name="IconBadge" Width="32" Height="32" CornerRadius="9"
-                        Background="{StaticResource BrushAccentDim}" VerticalAlignment="Center">
+                        Background="{DynamicResource BrushAccentDim}" VerticalAlignment="Center">
                     <TextBlock x:Name="IconGlyph" Text="ℹ" FontSize="16" FontWeight="Bold"
-                               Foreground="{StaticResource BrushAccent}"
+                               Foreground="{DynamicResource BrushAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <TextBlock x:Name="TitleText" Text="提示" FontSize="15" FontWeight="Bold"
-                           Foreground="{StaticResource BrushFg1}"
+                           Foreground="{DynamicResource BrushFg1}"
                            VerticalAlignment="Center" Margin="12,0,0,0"
                            TextTrimming="CharacterEllipsis" MaxWidth="300"/>
             </StackPanel>
 
             <TextBlock x:Name="MessageText" Text="" FontSize="13"
-                       Foreground="{StaticResource BrushFg1}" TextWrapping="Wrap"
+                       Foreground="{DynamicResource BrushFg1}" TextWrapping="Wrap"
                        LineHeight="21" Margin="0,14,0,0"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">

@@ -157,7 +157,7 @@ public partial class AccountEditWindow : Window
         var creds = CollectCredentials();
         if (SelectedProvider.CredentialFields.Count > 0 && creds.Count == 0)
         {
-            Dialog.Warn(this, "无法保存", "请填写凭据(API Key 等)");
+            Dialog.Warn(this, "无法保存", "请填写凭据（API Key 等）");
             return;
         }
         _card.Upsert(account, creds);

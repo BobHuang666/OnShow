@@ -10,25 +10,25 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="OnShow 快览" FontSize="11" Foreground="{StaticResource BrushFg2}"/>
+        <TextBlock Text="OnShow 快览" FontSize="11" Foreground="{DynamicResource BrushFg2}"/>
 
         <TextBlock Grid.Row="1" Text="{Binding DdlTitle}" FontSize="14" FontWeight="SemiBold"
-                   Foreground="{StaticResource BrushFg1}" Margin="0,8,0,0"
+                   Foreground="{DynamicResource BrushFg1}" Margin="0,8,0,0"
                    TextTrimming="CharacterEllipsis"/>
 
         <TextBlock Grid.Row="2" Text="{Binding DdlRemain}" FontSize="26" FontWeight="Bold" Margin="0,2,0,8">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="{StaticResource BrushFar}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource BrushFar}"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding DdlLevel}" Value="near">
-                            <Setter Property="Foreground" Value="{StaticResource BrushNear}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrushNear}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding DdlLevel}" Value="urgent">
-                            <Setter Property="Foreground" Value="{StaticResource BrushUrgent}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrushUrgent}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding DdlLevel}" Value="over">
-                            <Setter Property="Foreground" Value="{StaticResource BrushOver}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource BrushOver}"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -43,22 +43,22 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{StaticResource BrushFg2}"
+                        <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{DynamicResource BrushFg2}"
                                    TextTrimming="CharacterEllipsis"/>
                         <TextBlock Grid.Column="1" Text="{Binding Value}" FontSize="12" FontWeight="SemiBold"
                                    Margin="10,0,0,0">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="{StaticResource BrushNormal}"/>
+                                    <Setter Property="Foreground" Value="{DynamicResource BrushNormal}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding Level}" Value="warn">
-                                            <Setter Property="Foreground" Value="{StaticResource BrushWarn}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource BrushWarn}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="danger">
-                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource BrushDanger}"/>
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding Level}" Value="error">
-                                            <Setter Property="Foreground" Value="{StaticResource BrushUrgent}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource BrushUrgent}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -70,6 +70,6 @@
         </ItemsControl>
 
         <TextBlock Grid.Row="4" Text="{Binding UpdatedText}" FontSize="10"
-                   Foreground="{StaticResource BrushFg2}" HorizontalAlignment="Right" Margin="0,6,0,0"/>
+                   Foreground="{DynamicResource BrushFg2}" HorizontalAlignment="Right" Margin="0,6,0,0"/>
     </Grid>
 </UserControl>

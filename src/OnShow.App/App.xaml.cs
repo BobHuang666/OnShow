@@ -84,6 +84,7 @@ public partial class App : Application
         Log.Info($"OnShow 启动 args=[{string.Join(' ', e.Args)}]");
 
         Config = Json.Load<AppConfig>(AppPaths.ConfigFile);
+        AppTheme.Apply(Config.WidgetBackground);
 
         // 首次启动 / 协议文本版本升级:先取得同意,拒绝则直接退出
         if (Config.AgreementAcceptedVersion < AppMeta.AgreementVersion)
@@ -92,7 +93,7 @@ public partial class App : Application
             var eula = new EulaWindow();
             if (eula.ShowDialog() != true)
             {
-                Log.Info("未同意用户协议,退出");
+                Log.Info("未同意用户协议，退出");
                 Shutdown(0);
                 return;
             }
@@ -150,7 +151,7 @@ public partial class App : Application
             }
             catch (Exception ex)
             {
-                Log.Warn("后台检查更新失败(静默):" + ex.Message);
+                Log.Warn("后台检查更新失败（静默）：" + ex.Message);
             }
 
             Config.LastUpdateCheckUtc = DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture);
@@ -186,7 +187,7 @@ public partial class App : Application
         {
             Log.Error("检查更新失败", ex);
             Dialog.Warn(owner, "检查更新失败",
-                "无法连接 GitHub:" + ex.Message +
+                "无法连接 GitHub：" + ex.Message +
                 "\n\n提示:国内网络访问 GitHub 可能不稳定,请稍后重试,或到项目主页手动下载。");
         }
         finally
@@ -280,7 +281,7 @@ public partial class App : Application
         menu.Items.Add(mFeedback);
 
         var mAbout = new MenuItem { Header = "关于 OnShow…" };
-        mAbout.Click += (_, _) => OpenAbout();
+        mAbout.Click += (_, _) => OpenSettings("about");
         menu.Items.Add(mAbout);
 
         var mAuto = new MenuItem { Header = "开机自启动", IsCheckable = true, IsChecked = Config.AutoStart };
@@ -330,7 +331,7 @@ public partial class App : Application
         catch (Exception ex)
         {
             Log.Error("设置开机自启动失败", ex);
-            TryBalloon("OnShow", "开机自启动设置失败,详见日志");
+            TryBalloon("OnShow", "开机自启动设置失败，详见日志");
         }
         SaveConfig();
     }

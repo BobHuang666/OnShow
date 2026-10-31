@@ -7,8 +7,8 @@
         ShowInTaskbar="False" Topmost="True"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="12" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1" Margin="10"
+    <Border CornerRadius="12" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorderStrong}" BorderThickness="1" Margin="10"
             MouseLeftButtonDown="OnDragAreaMouseDown">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Opacity="0.5"/>
@@ -22,19 +22,19 @@
 
             <StackPanel Orientation="Horizontal">
                 <Border Width="38" Height="38" CornerRadius="11"
-                        Background="{StaticResource BrushAccentDim}" VerticalAlignment="Center">
-                    <TextBlock Text="O" FontSize="20" FontWeight="Bold" Foreground="{StaticResource BrushAccent}"
+                        Background="{DynamicResource BrushAccentDim}" VerticalAlignment="Center">
+                    <TextBlock Text="O" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
                 <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="欢迎使用 OnShow" FontSize="16" FontWeight="Bold"
-                               Foreground="{StaticResource BrushFg1}"/>
-                    <TextBlock Text="在开始使用前,请阅读并同意以下协议" FontSize="12"
-                               Foreground="{StaticResource BrushFg2}" Margin="0,3,0,0"/>
+                               Foreground="{DynamicResource BrushFg1}"/>
+                    <TextBlock Text="在开始使用前，请阅读并同意以下协议" FontSize="12"
+                               Foreground="{DynamicResource BrushFg2}" Margin="0,3,0,0"/>
                 </StackPanel>
             </StackPanel>
 
-            <Border Grid.Row="1" Margin="0,14" Background="{StaticResource BrushCard}"
+            <Border Grid.Row="1" Margin="0,14" Background="{DynamicResource BrushCard}"
                     CornerRadius="10" Padding="18,12">
                 <FlowDocumentScrollViewer x:Name="DocViewer" VerticalScrollBarVisibility="Auto"
                                           Background="Transparent"/>

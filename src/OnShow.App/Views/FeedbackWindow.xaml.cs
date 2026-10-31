@@ -49,7 +49,7 @@ public partial class FeedbackWindow : Window
         var dlg = new Microsoft.Win32.OpenFileDialog
         {
             Title = "选择截图",
-            Filter = "图片文件|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.webp",
+            Filter = "图片文件|*.png；*.jpg；*.jpeg；*.bmp；*.gif；*.webp",
             Multiselect = true,
         };
         if (dlg.ShowDialog(this) != true) return;
@@ -94,7 +94,7 @@ public partial class FeedbackWindow : Window
         var text = DescBox.Text.Trim();
         if (text.Length == 0 && _shots.Count == 0)
         {
-            Dialog.Warn(this, "反馈", "请先填写描述,或添加一张截图。");
+            Dialog.Warn(this, "反馈", "请先填写描述，或添加一张截图。");
             return;
         }
 
@@ -135,20 +135,20 @@ public partial class FeedbackWindow : Window
             var url = FeedbackComposer.BuildIssueUrl(AppMeta.IssuesNewUrl, title, body);
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
 
-            var hint = "已复制反馈内容" + (copied.Count > 0 ? "与首张截图" : "") + ",浏览器将打开 GitHub。\n\n" +
-                       "在打开的页面中:\n" +
-                       "1. 确认标题与描述(不完整可 Ctrl+V 粘贴完整文字)\n" +
-                       (copied.Count > 0 ? "2. 点击评论框按 Ctrl+V 粘贴截图;其余截图可从 " + tempDir + " 拖入\n" : "") +
-                       "3. 点击 Submit new issue\n\n" +
-                       "提交 Issue 需要 GitHub 账号;没有账号请改用「导出反馈包」。";
+            var hint = "已复制反馈内容" + (copied.Count > 0 ? "，首张截图已放入剪贴板" : "") + ",浏览器将打开 GitHub。\n\n" +
+                       "提交步骤：\n" +
+                       "1. 确认标题与描述（不完整可按 Ctrl+V 粘贴完整文字）\n" +
+                       (copied.Count > 0 ? "2. 在页面下方评论框内点一下，按 Ctrl+V 粘贴截图；其余截图可从 " + tempDir + " 拖入\n" : "") +
+                       "3. 点击 Submit new issue 提交\n\n" +
+                       "注意：截图不会自动上传，请在 issue 页面手动粘贴或拖拽上传。没有 GitHub 账号？改用「导出反馈包」，邮件发送时附上截图即可。";
             Dialog.Info(this, "反馈", hint);
-            Log.Info("用户提交反馈(GitHub)");
+            Log.Info("用户提交反馈（GitHub）");
             Close();
         }
         catch (Exception ex)
         {
             Log.Error("提交反馈失败", ex);
-            Dialog.Warn(this, "反馈", "提交失败:" + ex.Message);
+            Dialog.Warn(this, "反馈", "提交失败：" + ex.Message);
         }
         finally
         {
@@ -163,7 +163,7 @@ public partial class FeedbackWindow : Window
         var text = DescBox.Text.Trim();
         if (text.Length == 0 && _shots.Count == 0)
         {
-            Dialog.Warn(this, "导出反馈包", "请先填写描述,或添加一张截图。");
+            Dialog.Warn(this, "导出反馈包", "请先填写描述，或添加一张截图。");
             return;
         }
 
@@ -198,7 +198,7 @@ public partial class FeedbackWindow : Window
         catch (Exception ex)
         {
             Log.Error("导出反馈包失败", ex);
-            Dialog.Warn(this, "导出反馈包", "导出失败:" + ex.Message);
+            Dialog.Warn(this, "导出反馈包", "导出失败：" + ex.Message);
         }
     }
 

@@ -1,13 +1,13 @@
 <Window Icon="pack://application:,,,/Assets/onshow.ico" x:Class="OnShow.App.Views.AboutWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="关于 OnShow" Width="640" Height="600"
+        Title="更新日志与协议" Width="640" Height="600"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
-    <Border CornerRadius="12" Background="{StaticResource BrushPanel}"
-            BorderBrush="{StaticResource BrushBorderStrong}" BorderThickness="1" Margin="10"
+    <Border CornerRadius="12" Background="{DynamicResource BrushPanel}"
+            BorderBrush="{DynamicResource BrushBorderStrong}" BorderThickness="1" Margin="10"
             MouseLeftButtonDown="OnDragAreaMouseDown">
         <Border.Effect>
             <DropShadowEffect BlurRadius="16" ShadowDepth="3" Direction="270" Opacity="0.5"/>
@@ -18,24 +18,23 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="✕" Style="{StaticResource IconBtn}" FontSize="14"
-                       HorizontalAlignment="Right" VerticalAlignment="Top"
-                       Panel.ZIndex="2" Margin="0,-6,-10,0"
-                       ToolTip="关闭" MouseLeftButtonUp="OnCloseClick"/>
+            <!-- 关闭按钮:跨两列钉在窗口右上角;真 Button(拖拽区会吞 TextBlock 的鼠标抬起) -->
+            <Button Grid.ColumnSpan="2" Click="OnCloseClick" HorizontalAlignment="Right"
+                    VerticalAlignment="Top" Panel.ZIndex="2" Margin="0,-4,-8,0"
+                    ToolTip="关闭" Content="✕" FontSize="13" Padding="6,3"/>
 
             <!-- ===== 左栏 ===== -->
             <StackPanel>
                 <Border Width="44" Height="44" CornerRadius="13"
-                        Background="{StaticResource BrushAccentDim}" HorizontalAlignment="Left"
+                        Background="{DynamicResource BrushAccentDim}" HorizontalAlignment="Left"
                         Margin="8,2,0,10">
-                    <TextBlock Text="O" FontSize="23" FontWeight="Bold" Foreground="{StaticResource BrushAccent}"
+                    <TextBlock Text="O" FontSize="23" FontWeight="Bold" Foreground="{DynamicResource BrushAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
-                <TextBlock x:Name="VersionText" Text="v1.1.1" FontSize="14" FontWeight="Bold"
-                           Foreground="{StaticResource BrushFg1}" Margin="10,0,0,2"/>
+                <TextBlock Text="文档" FontSize="14" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushFg1}" Margin="10,0,0,2"/>
                 <ListBox x:Name="NavList" SelectionChanged="OnNavChanged" Margin="0,14,0,0">
-                    <ListBoxItem Content="ℹ  关于" IsSelected="True" Padding="12,8"/>
-                    <ListBoxItem Content="📋  更新日志" Padding="12,8"/>
+                    <ListBoxItem Content="📋  更新日志" IsSelected="True" Padding="12,8"/>
                     <ListBoxItem Content="📄  用户协议" Padding="12,8"/>
                     <ListBoxItem Content="🔒  隐私声明" Padding="12,8"/>
                 </ListBox>
@@ -43,34 +42,18 @@
 
             <!-- ===== 内容 ===== -->
             <Grid Grid.Column="1" Margin="16,0,2,0">
-
-                <StackPanel x:Name="PageAbout">
-                    <TextBlock Text="OnShow" FontSize="20" FontWeight="Bold"
-                               Foreground="{StaticResource BrushAccent}" Margin="0,4,0,6"/>
-                    <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="21"
-                               Text="DDL 倒计时 + Token 用量监控。&#x0a;开源免费 · 数据仅存本机 · 凭据 DPAPI 加密 · 无遥测"/>
-                    <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="21"
-                               Margin="0,10,0,0"
-                               Text="许可证 MIT · github.com/BobHuang666/OnShow"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
-                        <Button Content="检查更新" Style="{StaticResource BtnPrimary}" Click="OnCheckUpdate" Margin="0,0,9,0"/>
-                        <Button Content="反馈问题" Click="OnFeedback" Margin="0,0,9,0"/>
-                        <Button Content="项目主页" Click="OnOpenRepo"/>
-                    </StackPanel>
-                </StackPanel>
-
-                <Border x:Name="PageChangelog" Visibility="Collapsed" Background="{StaticResource BrushCard}"
-                        CornerRadius="10" Padding="16,10">
+                <Border x:Name="PageChangelog" Background="{DynamicResource BrushCard}"
+                        CornerRadius="10" Padding="16,10,24,10">
                     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent"/>
                 </Border>
 
-                <Border x:Name="PageAgreement" Visibility="Collapsed" Background="{StaticResource BrushCard}"
-                        CornerRadius="10" Padding="16,10">
+                <Border x:Name="PageAgreement" Visibility="Collapsed" Background="{DynamicResource BrushCard}"
+                        CornerRadius="10" Padding="16,10,24,10">
                     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent"/>
                 </Border>
 
-                <Border x:Name="PagePrivacy" Visibility="Collapsed" Background="{StaticResource BrushCard}"
-                        CornerRadius="10" Padding="16,10">
+                <Border x:Name="PagePrivacy" Visibility="Collapsed" Background="{DynamicResource BrushCard}"
+                        CornerRadius="10" Padding="16,10,24,10">
                     <FlowDocumentScrollViewer VerticalScrollBarVisibility="Auto" Background="Transparent"/>
                 </Border>
             </Grid>

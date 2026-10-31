@@ -65,7 +65,7 @@ public partial class DdlEditWindow : Window
         }
         if (!TryParseDue(DueBox.Text, out var due))
         {
-            Dialog.Warn(this, "无法保存", "时间格式无法识别,请使用:2026-06-08 14:00");
+            Dialog.Warn(this, "无法保存", "时间格式无法识别，请使用：2026-06-08 14：00");
             return;
         }
 

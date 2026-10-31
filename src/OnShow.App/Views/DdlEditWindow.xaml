@@ -3,32 +3,32 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="DDL" Width="400" SizeToContent="Height"
         WindowStyle="ToolWindow" ResizeMode="NoResize"
-        Background="{StaticResource BrushWindowBg}" WindowStartupLocation="CenterOwner" Topmost="True"
+        Background="{DynamicResource BrushWindowBg}" WindowStartupLocation="CenterOwner" Topmost="True"
         UseLayoutRounding="True" SnapsToDevicePixels="True">
 
     <StackPanel Margin="20,18">
         <TextBlock x:Name="HeaderText" Text="添加 DDL" FontSize="15" FontWeight="Bold"
-                   Foreground="{StaticResource BrushFg1}" Margin="0,0,0,16"/>
+                   Foreground="{DynamicResource BrushFg1}" Margin="0,0,0,16"/>
 
         <Label Content="标题"/>
         <TextBox x:Name="TitleBox" MinHeight="34" Margin="0,6,0,14"/>
 
-        <Label Content="截止时间(格式:2026-06-08 14:00)"/>
+        <Label Content="截止时间（格式：2026-06-08 14：00）"/>
         <TextBox x:Name="DueBox" MinHeight="34" Margin="0,6,0,8"/>
         <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
-            <Button Content="明天 18:00" Padding="10,5" Margin="0,0,7,0" Click="OnChipTomorrow"/>
+            <Button Content="明天 18：00" Padding="10,5" Margin="0,0,7,0" Click="OnChipTomorrow"/>
             <Button Content="3 天后" Padding="10,5" Margin="0,0,7,0" Click="OnChip3Days"/>
             <Button Content="7 天后" Padding="10,5" Click="OnChip7Days"/>
         </StackPanel>
 
-        <Label Content="提前提醒(到期前)"/>
+        <Label Content="提前提醒（到期前）"/>
         <StackPanel Orientation="Horizontal" Margin="0,6,0,14">
             <CheckBox x:Name="R3d" Content="3 天"/>
             <CheckBox x:Name="R24h" Content="24 小时" IsChecked="True"/>
             <CheckBox x:Name="R1h" Content="1 小时"/>
         </StackPanel>
 
-        <Label Content="备注(可选)"/>
+        <Label Content="备注（可选）"/>
         <TextBox x:Name="NoteBox" Height="56" AcceptsReturn="True" TextWrapping="Wrap"
                  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
                  Margin="0,6,0,10"/>

@@ -27,7 +27,7 @@ internal static class UpdateService
         GitHubReleaseInfo release, IProgress<UpdateProgress> progress, CancellationToken ct, string? mirrorPrefix)
     {
         if (release.ZipAssetUrl is null || release.ZipAssetName is null)
-            throw new InvalidOperationException("该版本未提供 Windows 安装包,请到 GitHub Releases 手动下载。");
+            throw new InvalidOperationException("该版本未提供 Windows 安装包，请到 GitHub Releases 手动下载。");
 
         Directory.CreateDirectory(TempDir);
         var zipPath = Path.Combine(TempDir, release.ZipAssetName);
@@ -38,11 +38,11 @@ internal static class UpdateService
         progress.Report(new UpdateProgress(100, "校验完整性…"));
         var expected = await TryGetExpectedHashAsync(release, ct)
                        ?? throw new InvalidDataException(
-                           "无法从 GitHub 官方获取校验信息(checksums 与 API 均不可达)。为安全起见已中止安装,请稍后重试或到 GitHub Releases 手动下载。");
+                           "无法从 GitHub 官方获取校验信息（checksums 与 API 均不可达）。为安全起见已中止安装，请稍后重试或到 GitHub Releases 手动下载。");
 
         var actual = await ComputeSha256Async(zipPath, ct);
         if (!string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase))
-            throw new InvalidDataException("安装包 SHA256 校验失败,已中止更新(下载可能不完整)。请重试或到 GitHub Releases 手动下载。");
+            throw new InvalidDataException("安装包 SHA256 校验失败，已中止更新（下载可能不完整）。请重试或到 GitHub Releases 手动下载。");
 
         progress.Report(new UpdateProgress(100, "解压新版本…"));
         var extractDir = Path.Combine(TempDir, "new");
@@ -50,7 +50,7 @@ internal static class UpdateService
         using (var zip = ZipFile.OpenRead(zipPath))
         {
             var entry = zip.GetEntry("OnShow.exe")
-                        ?? throw new InvalidDataException("安装包中未找到 OnShow.exe,安装包可能已损坏。");
+                        ?? throw new InvalidDataException("安装包中未找到 OnShow.exe，安装包可能已损坏。");
             var newExe = Path.Combine(extractDir, "OnShow.exe");
             entry.ExtractToFile(newExe, overwrite: true);
         }
@@ -76,7 +76,7 @@ internal static class UpdateService
                     var hash = ChecksumFile.FindFor(text, release.ZipAssetName!);
                     if (hash is not null)
                     {
-                        Log.Info("校验锚点:官方 checksums.txt");
+                        Log.Info("校验锚点：官方 checksums.txt");
                         return hash;
                     }
                     break;   // checksums 存在但无对应行,重试无意义
@@ -97,7 +97,7 @@ internal static class UpdateService
 
         if (release.ZipDigestHex is { } digest)
         {
-            Log.Info("校验锚点:GitHub API asset digest");
+            Log.Info("校验锚点：GitHub API asset digest");
             return digest;
         }
         return null;
@@ -107,7 +107,7 @@ internal static class UpdateService
     public static void LaunchApply(string newExePath)
     {
         var target = Environment.ProcessPath
-                     ?? throw new InvalidOperationException("无法确定当前程序路径,无法自动更新。");
+                     ?? throw new InvalidOperationException("无法确定当前程序路径，无法自动更新。");
         var psi = new ProcessStartInfo(newExePath) { UseShellExecute = false };
         psi.ArgumentList.Add("--apply-update");
         psi.ArgumentList.Add(target);
@@ -171,7 +171,7 @@ internal static class UpdateService
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
             catch (Exception ex)
             {
-                Log.Warn("分段下载失败,回退单流:" + ex.Message);
+                Log.Warn("分段下载失败，回退单流：" + ex.Message);
             }
         }
         await SingleStreamAsync(url, path, total, progress, ct);
@@ -317,12 +317,12 @@ internal static class ApplyUpdateRunner
 
         if (!replaced)
         {
-            Log.Error("更新安装失败:主程序文件长期被占用");
-            Dialog.Warn(null, "OnShow 更新", "替换主程序失败(文件被占用,可能被杀毒软件扫描)。本次更新已取消,程序可正常使用,请稍后重新检查更新。");
+            Log.Error("更新安装失败：主程序文件长期被占用");
+            Dialog.Warn(null, "OnShow 更新", "替换主程序失败（文件被占用，可能被杀毒软件扫描）。本次更新已取消，程序可正常使用，请稍后重新检查更新。");
             return;
         }
 
-        Log.Info("更新安装完成,重启应用");
+        Log.Info("更新安装完成，重启应用");
         try
         {
             Process.Start(new ProcessStartInfo(targetExe) { UseShellExecute = true });
@@ -330,7 +330,7 @@ internal static class ApplyUpdateRunner
         catch (Exception ex)
         {
             Log.Error("更新后自动重启失败", ex);
-            Dialog.Warn(null, "OnShow 更新", "新版本已安装,但自动启动失败,请手动运行 OnShow.exe。");
+            Dialog.Warn(null, "OnShow 更新", "新版本已安装，但自动启动失败，请手动运行 OnShow.exe。");
         }
     }
 }

@@ -12,6 +12,7 @@ public partial class FlyoutWindow : Window
     readonly GlanceVm _vm = new();
     readonly DispatcherTimer _closeTimer;
     Rect _iconRectPhysical;
+    Rect _anchorPhysical;
     int _outsideStreak;
 
     public FlyoutWindow()
@@ -27,12 +28,21 @@ public partial class FlyoutWindow : Window
         _iconRectPhysical = new Rect(iconRect.Left, iconRect.Top,
             iconRect.Right - iconRect.Left, iconRect.Bottom - iconRect.Top);
 
+        // 光标锚点:Win11 的 Shell_NotifyIconGetRect 偶发返回垃圾矩形,
+        // 收起判定与兜底定位都以「触发悬停时的光标位置」为准,不依赖图标矩形。
+        NativeMethods.GetCursorPos(out var cp);
+        _anchorPhysical = new Rect(cp.X - 14, cp.Y - 14, 28, 28);
+
+        var anchorRect = _iconRectPhysical;
+        if (anchorRect.Width < 6 || anchorRect.Height < 6 || anchorRect.Width > 120 || anchorRect.Height > 120)
+            anchorRect = new Rect(cp.X - 11, cp.Y - 11, 22, 22);   // 图标矩形可疑,用光标兜底定位
+
         // 物理像素 → 逻辑坐标(DIP)
         var m = Matrix.Identity;
         var source = PresentationSource.FromVisual(this);
         if (source?.CompositionTarget is not null)
             m = source.CompositionTarget.TransformFromDevice;
-        var logical = Rect.Transform(_iconRectPhysical, m);
+        var logical = Rect.Transform(anchorRect, m);
 
         var work = SystemParameters.WorkArea;
         var left = logical.Left + logical.Width / 2 - Width / 2;
@@ -77,10 +87,10 @@ public partial class FlyoutWindow : Window
 
         var flyout = new Rect(Left, Top, ActualWidth, ActualHeight);
         flyout.Transform(m);
-        var icon = Rect.Transform(_iconRectPhysical, m);
+        var anchor = Rect.Transform(_anchorPhysical, m);
 
-        // 图标 ∪ 快览 整体外扩 10 逻辑像素:覆盖两者之间的空隙,避免"关了又开"的循环闪烁
-        var keep = Rect.Union(flyout, icon);
+        // 锚点 ∪ 快览 整体外扩 10 逻辑像素;不使用图标矩形,规避系统返回垃圾值导致的闪关
+        var keep = Rect.Union(flyout, anchor);
         keep.Inflate(10, 10);
         if (keep.Contains(cursor))
         {

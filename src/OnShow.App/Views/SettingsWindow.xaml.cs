@@ -95,7 +95,7 @@ public partial class SettingsWindow : Window
         {
             Log.Error("设置开机自启动失败", ex);
             AutoStartBox.IsChecked = !want;
-            Dialog.Info(this, "OnShow", "开机自启动设置失败,详见日志", "error");
+            Dialog.Info(this, "OnShow", "开机自启动设置失败，详见日志", "error");
         }
     }
 
@@ -216,14 +216,14 @@ public partial class SettingsWindow : Window
 
     void BuildBgSwatches()
     {
-        foreach (var preset in WidgetTheme.Presets)
+        foreach (var preset in AppTheme.Presets)
         {
             var border = new Border
             {
                 Width = 26,
                 Height = 26,
                 CornerRadius = new CornerRadius(13),
-                Background = new SolidColorBrush(preset.Panel),
+                Background = new SolidColorBrush(AppTheme.PanelColor(preset.Key)),
                 BorderThickness = new Thickness(2),
                 BorderBrush = (Brush)FindResource("BrushBorderStrong"),
                 Margin = new Thickness(0, 0, 8, 4),
@@ -235,7 +235,7 @@ public partial class SettingsWindow : Window
             {
                 _config.WidgetBackground = preset.Key;
                 UpdateSwatchSelection();
-                App.Instance.Widget?.ApplyBackground();
+                AppTheme.Apply(_config.WidgetBackground);   // 应用级资源:全部窗口即时切换
                 App.Instance.SaveConfig();
                 Log.Info($"面板背景 -> {preset.Key}({preset.Name})");
             };
@@ -328,6 +328,18 @@ public partial class SettingsWindow : Window
     void OnFeedback(object sender, RoutedEventArgs e) => App.Instance.OpenFeedback(this);
 
     void OnOpenAbout(object sender, RoutedEventArgs e) => App.Instance.OpenAbout();
+
+    void OnOpenRepo(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(AppMeta.RepoUrl) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Log.Error("打开项目主页失败", ex);
+        }
+    }
 
     void OnOpenDataFolder(object sender, RoutedEventArgs e)
     {

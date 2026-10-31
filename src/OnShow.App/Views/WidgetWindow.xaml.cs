@@ -7,7 +7,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using OnShow.App.Interop;
-using OnShow.App.Services;
 using OnShow.Cards.Ddl;
 using OnShow.Cards.Token;
 using OnShow.Core;
@@ -44,7 +43,6 @@ public partial class WidgetWindow : Window
         _config = config;
         _openSettings = openSettings;
 
-        WidgetTheme.Apply(this, _config.WidgetBackground);
         RootBorder.Opacity = Math.Clamp(config.Window.Opacity, 0.5, 1);
 
         _ddl.ViewModelChanged += RebuildDdl;
@@ -123,8 +121,6 @@ public partial class WidgetWindow : Window
     public void ApplyModeChange() => PinService.ApplyMode(this, _config.Window.Mode);
 
     public void ApplyOpacity() => RootBorder.Opacity = Math.Clamp(_config.Window.Opacity, 0.5, 1);
-
-    public void ApplyBackground() => WidgetTheme.Apply(this, _config.WidgetBackground);
 
     public void ForceClose()
     {
