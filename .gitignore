@@ -4,3 +4,4 @@ dist/
 *.user
 .vs/
 .zcode/
+tools/uatest-*.ps1
