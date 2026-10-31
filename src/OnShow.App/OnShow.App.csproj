@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>OnShow.App</RootNamespace>
+    <AssemblyName>OnShow</AssemblyName>
+    <Version>1.0.0</Version>
+    <ApplicationIcon>Assets\onshow.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SatelliteResourceLanguages>zh-CN</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\onshow.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OnShow.Core\OnShow.Core.csproj" />
+    <ProjectReference Include="..\OnShow.Cards.Ddl\OnShow.Cards.Ddl.csproj" />
+    <ProjectReference Include="..\OnShow.Cards.Token\OnShow.Cards.Token.csproj" />
+  </ItemGroup>
+
+</Project>

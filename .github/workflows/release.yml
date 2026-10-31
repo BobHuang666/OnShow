@@ -1,0 +1,76 @@
+name: Release
+
+# 推送 v* 标签时构建、打包、发布 GitHub Release。
+# 要求:标签必须与 src/OnShow.App/OnShow.App.csproj 的 <Version> 一致,
+#       且 CHANGELOG.md 中存在对应「## [x.y.z]」小节(自动提取为 Release 说明)。
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build & test
+        run: dotnet test OnShow.sln -c Release
+
+      - name: Publish (self-contained single file)
+        run: >
+          dotnet publish src/OnShow.App/OnShow.App.csproj -c Release -r win-x64
+          --self-contained true -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:DebugType=none -p:DebugSymbols=false
+          -o publish
+
+      - name: Verify tag matches csproj version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}" -replace '^v', ''
+          [xml]$csproj = Get-Content src/OnShow.App/OnShow.App.csproj
+          $ver = $csproj.Project.PropertyGroup.Version
+          if ($tag -ne $ver) { throw "标签 v$tag 与 csproj <Version>$ver 不一致" }
+          "TAG=$tag" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Extract release notes from CHANGELOG
+        shell: pwsh
+        run: |
+          $tag = $env:TAG
+          $capture = $false
+          $notes = New-Object System.Collections.Generic.List[string]
+          foreach ($line in Get-Content CHANGELOG.md -Encoding UTF8) {
+            if ($line -match '^## \[(.+?)\]') {
+              if ($capture) { break }
+              $capture = ($Matches[1] -eq $tag)
+              if ($capture) { continue }
+            } elseif ($capture) { $notes.Add($line) }
+          }
+          if (-not $capture) { throw "CHANGELOG.md 中未找到 [$tag] 小节" }
+          ($notes -join "`r`n").Trim() | Out-File release-notes.txt -Encoding utf8
+
+      - name: Package zip + SHA256
+        shell: pwsh
+        run: |
+          $zip = "OnShow-v$($env:TAG)-win-x64.zip"
+          Compress-Archive -Path publish/OnShow.exe -DestinationPath $zip
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  $zip" | Out-File checksums.txt -Encoding ascii
+          Write-Host (Get-Content checksums.txt)
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            OnShow-*-win-x64.zip
+            checksums.txt
+          body_path: release-notes.txt
+          fail_on_unmatched_files: true

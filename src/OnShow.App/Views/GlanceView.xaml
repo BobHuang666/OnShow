@@ -1,0 +1,75 @@
+<UserControl x:Class="OnShow.App.Views.GlanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="OnShow 快览" FontSize="11" Foreground="{StaticResource BrushFg2}"/>
+
+        <TextBlock Grid.Row="1" Text="{Binding DdlTitle}" FontSize="14" FontWeight="SemiBold"
+                   Foreground="{StaticResource BrushFg1}" Margin="0,8,0,0"
+                   TextTrimming="CharacterEllipsis"/>
+
+        <TextBlock Grid.Row="2" Text="{Binding DdlRemain}" FontSize="26" FontWeight="Bold" Margin="0,2,0,8">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="{StaticResource BrushFar}"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DdlLevel}" Value="near">
+                            <Setter Property="Foreground" Value="{StaticResource BrushNear}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DdlLevel}" Value="urgent">
+                            <Setter Property="Foreground" Value="{StaticResource BrushUrgent}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DdlLevel}" Value="over">
+                            <Setter Property="Foreground" Value="{StaticResource BrushOver}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <ItemsControl Grid.Row="3" ItemsSource="{Binding Lines}" VerticalAlignment="Top">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding Name}" FontSize="12" Foreground="{StaticResource BrushFg2}"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="1" Text="{Binding Value}" FontSize="12" FontWeight="SemiBold"
+                                   Margin="10,0,0,0">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{StaticResource BrushNormal}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Level}" Value="warn">
+                                            <Setter Property="Foreground" Value="{StaticResource BrushWarn}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="danger">
+                                            <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Level}" Value="error">
+                                            <Setter Property="Foreground" Value="{StaticResource BrushUrgent}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Grid.Row="4" Text="{Binding UpdatedText}" FontSize="10"
+                   Foreground="{StaticResource BrushFg2}" HorizontalAlignment="Right" Margin="0,6,0,0"/>
+    </Grid>
+</UserControl>
