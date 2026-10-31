@@ -56,8 +56,9 @@ public partial class UpdateWindow : Window
 
         try
         {
+            var mirror = App.Instance.Config.DownloadMirrorPrefix;
             var newExe = await Task.Run(() =>
-                UpdateService.DownloadAndPrepareAsync(_release, progress, _cts.Token));
+                UpdateService.DownloadAndPrepareAsync(_release, progress, _cts.Token, mirror));
 
             StatusText.Text = "校验通过,即将重启并安装新版本…";
             await Task.Delay(500);

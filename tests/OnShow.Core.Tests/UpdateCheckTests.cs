@@ -22,7 +22,8 @@ public class UpdateCheckTests
             {
               "name": "OnShow-v1.1.0-win-x64.zip",
               "browser_download_url": "https://github.com/BobHuang666/OnShow/releases/download/v1.1.0/OnShow-v1.1.0-win-x64.zip",
-              "size": 68000000
+              "size": 68000000,
+              "digest": "sha256:a063f25607f35f2b3349e14e43571ad1e90273b986d8a337862d229553178a77"
             }
           ]
         }
@@ -39,6 +40,7 @@ public class UpdateCheckTests
         Assert.Equal("https://github.com/BobHuang666/OnShow/releases/download/v1.1.0/OnShow-v1.1.0-win-x64.zip", info.ZipAssetUrl);
         Assert.Equal(68000000, info.ZipSize);
         Assert.Equal("https://github.com/BobHuang666/OnShow/releases/download/v1.1.0/checksums.txt", info.ChecksumsUrl);
+        Assert.Equal("a063f25607f35f2b3349e14e43571ad1e90273b986d8a337862d229553178a77", info.ZipDigestHex);
         Assert.Contains("应用内更新", info.Body);
     }
 

@@ -13,8 +13,16 @@ public sealed class GitHubReleaseInfo
     public long ZipSize { get; init; }
     public string? ChecksumsUrl { get; init; }
 
+    /// <summary>GitHub API 返回的资产摘要(如 "sha256:abcd…"),与 checksums.txt 同为官方信任锚点。</summary>
+    public string? ZipDigest { get; init; }
+
     /// <summary>去掉 v 前缀的语义版本;无法解析时为 null。</summary>
     public Version? Version => Version.TryParse(TagName.TrimStart('v', 'V'), out var v) ? v : null;
+
+    /// <summary>ZipDigest 中的十六进制摘要;格式不符时为 null。</summary>
+    public string? ZipDigestHex =>
+        ZipDigest is { } d && d.StartsWith("sha256:", StringComparison.OrdinalIgnoreCase)
+            ? d["sha256:".Length..] : null;
 }
 
 /// <summary>解析 /releases/latest JSON,提取 OnShow-*.zip 与 checksums.txt 两个资产。解析失败返回 null。</summary>
@@ -36,7 +44,7 @@ public static class GitHubReleaseParser
                 body = bodyEl.GetString();
             if (tagName is null) return null;
 
-            string? zipUrl = null, zipName = null, csUrl = null;
+            string? zipUrl = null, zipName = null, csUrl = null, zipDigest = null;
             long zipSize = 0;
             if (root.TryGetProperty("assets", out var assets) && assets.ValueKind == JsonValueKind.Array)
             {
@@ -54,6 +62,8 @@ public static class GitHubReleaseParser
                         zipName = assetName;
                         zipSize = a.TryGetProperty("size", out var s) && s.ValueKind == JsonValueKind.Number
                             ? s.GetInt64() : 0;
+                        zipDigest = a.TryGetProperty("digest", out var dg) && dg.ValueKind == JsonValueKind.String
+                            ? dg.GetString() : null;
                     }
                     else if (csUrl is null && assetName.Equals("checksums.txt", StringComparison.OrdinalIgnoreCase))
                     {
@@ -71,6 +81,7 @@ public static class GitHubReleaseParser
                 ZipAssetName = zipName,
                 ZipSize = zipSize,
                 ChecksumsUrl = csUrl,
+                ZipDigest = zipDigest,
             };
         }
         catch (Exception)

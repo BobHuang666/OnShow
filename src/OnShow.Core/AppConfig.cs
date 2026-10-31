@@ -33,6 +33,12 @@ public class AppConfig
 
     /// <summary>用户选择「跳过此版本」的版本号(如 1.1.0),自动检查不再提示该版本。</summary>
     public string? SkippedVersion { get; set; }
+
+    /// <summary>
+    /// 更新包下载加速镜像前缀(如 https://ghfast.top/),留空直连 GitHub。
+    /// 仅 zip 安装包走镜像;SHA256 校验文件永远走官方,镜像无法篡改内容。
+    /// </summary>
+    public string? DownloadMirrorPrefix { get; set; } = "https://ghfast.top/";
 }
 
 public class WindowConfig

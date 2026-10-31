@@ -33,6 +33,7 @@ public partial class SettingsWindow : Window
         NavVersion.Text = "v" + AppMeta.CurrentVersionString;
         AboutTitle.Text = $"OnShow v{AppMeta.CurrentVersionString}";
         AutoUpdateBox.IsChecked = _config.AutoCheckUpdate;
+        MirrorBox.Text = _config.DownloadMirrorPrefix ?? "";
 
         RefreshDdlList();
         RefreshAccountList();
@@ -212,6 +213,13 @@ public partial class SettingsWindow : Window
     {
         if (_config is null || AutoUpdateBox.IsChecked is null) return;
         _config.AutoCheckUpdate = AutoUpdateBox.IsChecked.Value;
+    }
+
+    void OnMirrorChanged(object sender, RoutedEventArgs e)
+    {
+        if (_config is null || MirrorBox is null) return;
+        var text = MirrorBox.Text.Trim();
+        _config.DownloadMirrorPrefix = text.Length == 0 ? null : text;
     }
 
     void OnCheckUpdate(object sender, RoutedEventArgs e) => App.Instance.CheckForUpdateInteractive(this);
