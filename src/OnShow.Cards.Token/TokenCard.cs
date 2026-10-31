@@ -32,6 +32,7 @@ public sealed class TokenCard : ICard
         _ui = SynchronizationContext.Current;
         _accounts = Json.Load<List<TokenAccount>>(DataFile);
         _state = host.State.Get<TokenState>("token", new TokenState());
+        MigrateOrder();
         RebuildRows();
         _timer = new System.Threading.Timer(
             _ => _ = RefreshAsync(),
@@ -54,12 +55,31 @@ public sealed class TokenCard : ICard
         {
             var idx = _accounts.FindIndex(x => x.Id == account.Id);
             if (idx >= 0) _accounts[idx] = account;
-            else _accounts.Add(account);
+            else
+            {
+                if (account.Order == 0) account.Order = _accounts.Count == 0 ? 0 : _accounts.Max(a => a.Order) + 1;
+                _accounts.Add(account);
+            }
             Json.Save(DataFile, _accounts);
             RebuildRows();
         }
         if (credentials is not null) SecretStore.Set(account.Id, credentials);
         _ = RefreshOneAsync(account.Id);
+    }
+
+    /// <summary>设置页拖拽排序:按给定 id 顺序重写 Order 并落盘。</summary>
+    public void Reorder(IReadOnlyList<string> orderedIds)
+    {
+        lock (_gate)
+        {
+            for (var i = 0; i < orderedIds.Count; i++)
+            {
+                var account = _accounts.FirstOrDefault(x => x.Id == orderedIds[i]);
+                if (account is not null) account.Order = i;
+            }
+            Json.Save(DataFile, _accounts);
+            RebuildRows();
+        }
     }
 
     public void Remove(string id)
@@ -81,8 +101,18 @@ public sealed class TokenCard : ICard
         lock (_gate)
         {
             _accounts = Json.Load<List<TokenAccount>>(DataFile);
+            MigrateOrder();
             RebuildRows();
         }
+    }
+
+    /// <summary>旧数据迁移:全部 Order 均为 0 时,按名称初始化排序号。</summary>
+    void MigrateOrder()
+    {
+        if (_accounts.Count == 0 || _accounts.Any(a => a.Order != 0)) return;
+        var ordered = _accounts.OrderBy(a => a.Enabled ? 0 : 1).ThenBy(a => a.Name).ToList();
+        for (var i = 0; i < ordered.Count; i++) ordered[i].Order = i;
+        Json.Save(DataFile, _accounts);
     }
 
     /// <summary>配置里轮询间隔变化后重排定时器。</summary>
@@ -199,6 +229,7 @@ public sealed class TokenCard : ICard
     {
         _rows = _accounts
             .OrderBy(a => a.Enabled ? 0 : 1)
+            .ThenBy(a => a.Order)
             .ThenBy(a => a.Name)
             .Select(a =>
             {

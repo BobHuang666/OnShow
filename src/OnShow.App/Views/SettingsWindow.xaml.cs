@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using OnShow.App.Services;
 using OnShow.Cards.Ddl;
 using OnShow.Cards.Token;
@@ -34,6 +36,7 @@ public partial class SettingsWindow : Window
         AboutTitle.Text = $"OnShow v{AppMeta.CurrentVersionString}";
         AutoUpdateBox.IsChecked = _config.AutoCheckUpdate;
         MirrorBox.Text = _config.DownloadMirrorPrefix ?? "";
+        BuildBgSwatches();
 
         RefreshDdlList();
         RefreshAccountList();
@@ -208,6 +211,104 @@ public partial class SettingsWindow : Window
         => _ = App.Instance.TokenCard.RefreshAsync();
 
     // ---------- 关于 ----------
+
+    readonly List<Border> _swatches = new();
+
+    void BuildBgSwatches()
+    {
+        foreach (var preset in WidgetTheme.Presets)
+        {
+            var border = new Border
+            {
+                Width = 26,
+                Height = 26,
+                CornerRadius = new CornerRadius(13),
+                Background = new SolidColorBrush(preset.Panel),
+                BorderThickness = new Thickness(2),
+                BorderBrush = (Brush)FindResource("BrushBorderStrong"),
+                Margin = new Thickness(0, 0, 8, 4),
+                Cursor = Cursors.Hand,
+                ToolTip = preset.Name,
+                Tag = preset.Key,
+            };
+            border.MouseLeftButtonUp += (_, _) =>
+            {
+                _config.WidgetBackground = preset.Key;
+                UpdateSwatchSelection();
+                App.Instance.Widget?.ApplyBackground();
+                App.Instance.SaveConfig();
+                Log.Info($"面板背景 -> {preset.Key}({preset.Name})");
+            };
+            _swatches.Add(border);
+            BgSwatches.Children.Add(border);
+        }
+        UpdateSwatchSelection();
+    }
+
+    void UpdateSwatchSelection()
+    {
+        var accent = (Brush)FindResource("BrushAccent");
+        var normal = (Brush)FindResource("BrushBorderStrong");
+        foreach (var s in _swatches)
+        {
+            var selected = (string)s.Tag == _config.WidgetBackground;
+            s.BorderBrush = selected ? accent : normal;
+            s.Opacity = selected ? 1 : 0.75;
+        }
+    }
+
+    // ---------- 列表拖拽排序 ----------
+
+    Point _dragStart;
+    object? _dragPayload;
+    ListBox? _dragList;
+
+    void OnListMouseDown(object sender, MouseButtonEventArgs e)
+    {
+        if (sender is not ListBox lb) return;
+        _dragList = lb;
+        _dragStart = e.GetPosition(lb);
+        var container = ItemsControl.ContainerFromElement(lb, e.OriginalSource as DependencyObject) as ListBoxItem;
+        _dragPayload = container?.DataContext;
+    }
+
+    void OnListMouseMove(object sender, MouseEventArgs e)
+    {
+        if (_dragPayload is null || _dragList is null || e.LeftButton != MouseButtonState.Pressed) return;
+        var pos = e.GetPosition(_dragList);
+        if (Math.Abs(pos.X - _dragStart.X) < 6 && Math.Abs(pos.Y - _dragStart.Y) < 6) return;
+        try { DragDrop.DoDragDrop(_dragList, _dragPayload, DragDropEffects.Move); }
+        finally { _dragPayload = null; }
+    }
+
+    void OnListDrop(object sender, DragEventArgs e)
+    {
+        if (sender is not ListBox lb) return;
+        var container = ItemsControl.ContainerFromElement(lb, e.OriginalSource as DependencyObject) as ListBoxItem;
+
+        if (ReferenceEquals(lb, DdlManageList))
+        {
+            if (e.Data.GetData(typeof(DdlItemVm)) is not DdlItemVm drag) return;
+            var ids = App.Instance.DdlCard.Items.Select(v => v.Id).ToList();
+            var to = container is null ? ids.Count : ids.IndexOf(((DdlItemVm)container.DataContext).Id);
+            ids.Remove(drag.Id);
+            to = Math.Clamp(to, 0, ids.Count);
+            ids.Insert(to, drag.Id);
+            App.Instance.DdlCard.Reorder(ids);
+            RefreshDdlList();
+        }
+        else if (ReferenceEquals(lb, AccountManageList))
+        {
+            if (e.Data.GetData(typeof(TokenRowVm)) is not TokenRowVm drag) return;
+            var ids = App.Instance.TokenCard.Rows.Select(v => v.Account.Id).ToList();
+            var to = container is null ? ids.Count : ids.IndexOf(((TokenRowVm)container.DataContext).Account.Id);
+            ids.Remove(drag.Account.Id);
+            to = Math.Clamp(to, 0, ids.Count);
+            ids.Insert(to, drag.Account.Id);
+            App.Instance.TokenCard.Reorder(ids);
+            RefreshAccountList();
+        }
+    }
 
     void OnAutoUpdateChanged(object sender, RoutedEventArgs e)
     {

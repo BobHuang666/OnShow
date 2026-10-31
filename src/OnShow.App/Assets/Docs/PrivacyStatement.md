@@ -34,4 +34,4 @@
 
 ## 联系方式
 
-邮箱:202311109047@mail.bnu.edu.cn · GitHub Issues:https://github.com/BobHuang666/OnShow/issues
+邮箱:bobhuang666@foxmail.com · GitHub Issues:https://github.com/BobHuang666/OnShow/issues

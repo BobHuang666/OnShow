@@ -18,6 +18,11 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
+            <TextBlock Text="✕" Style="{StaticResource IconBtn}" FontSize="14"
+                       HorizontalAlignment="Right" VerticalAlignment="Top"
+                       Panel.ZIndex="2" Margin="0,-6,-10,0"
+                       ToolTip="关闭" MouseLeftButtonUp="OnCloseClick"/>
+
             <!-- ===== 左栏 ===== -->
             <StackPanel>
                 <Border Width="44" Height="44" CornerRadius="13"
@@ -26,7 +31,7 @@
                     <TextBlock Text="O" FontSize="23" FontWeight="Bold" Foreground="{StaticResource BrushAccent}"
                                HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Border>
-                <TextBlock x:Name="VersionText" Text="v1.1.0" FontSize="14" FontWeight="Bold"
+                <TextBlock x:Name="VersionText" Text="v1.1.1" FontSize="14" FontWeight="Bold"
                            Foreground="{StaticResource BrushFg1}" Margin="10,0,0,2"/>
                 <ListBox x:Name="NavList" SelectionChanged="OnNavChanged" Margin="0,14,0,0">
                     <ListBoxItem Content="ℹ  关于" IsSelected="True" Padding="12,8"/>
@@ -43,18 +48,15 @@
                     <TextBlock Text="OnShow" FontSize="20" FontWeight="Bold"
                                Foreground="{StaticResource BrushAccent}" Margin="0,4,0,6"/>
                     <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="21"
-                               Text="Windows 桌面常驻信息小部件:DDL 倒计时 + Token 用量监控。&#x0a;开源、免费、无遥测:所有数据只保存在本机,凭据经 DPAPI 加密。"/>
+                               Text="DDL 倒计时 + Token 用量监控。&#x0a;开源免费 · 数据仅存本机 · 凭据 DPAPI 加密 · 无遥测"/>
                     <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="21"
                                Margin="0,10,0,0"
-                               Text="许可证:MIT(见 GitHub 仓库 LICENSE)&#x0a;项目主页:github.com/BobHuang666/OnShow"/>
+                               Text="许可证 MIT · github.com/BobHuang666/OnShow"/>
                     <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
                         <Button Content="检查更新" Style="{StaticResource BtnPrimary}" Click="OnCheckUpdate" Margin="0,0,9,0"/>
                         <Button Content="反馈问题" Click="OnFeedback" Margin="0,0,9,0"/>
                         <Button Content="项目主页" Click="OnOpenRepo"/>
                     </StackPanel>
-                    <TextBlock Foreground="{StaticResource BrushOver}" FontSize="11" Margin="0,14,0,0"
-                               TextWrapping="Wrap"
-                               Text="提示:更新检查通过 GitHub 官方接口进行;下载完成后会进行 SHA256 完整性校验,再自动重启替换。"/>
                 </StackPanel>
 
                 <Border x:Name="PageChangelog" Visibility="Collapsed" Background="{StaticResource BrushCard}"

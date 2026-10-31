@@ -18,6 +18,9 @@ public class TokenAccount
     public decimal? ManualLimit { get; set; }
 
     public bool Enabled { get; set; } = true;
+
+    /// <summary>手动排序号(设置页拖拽调整);0 表示未初始化,按名称排序迁移。</summary>
+    public int Order { get; set; }
 }
 
 /// <summary>快照类型:余额型(剩余额度) / 配额型(已用/总量) / 用量型(累计消耗)。</summary>

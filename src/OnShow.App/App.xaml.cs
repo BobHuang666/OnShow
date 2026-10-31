@@ -23,6 +23,7 @@ public partial class App : Application
     internal TrayIconService? Tray { get; private set; }
 
     Mutex? _mutex;
+    EventWaitHandle? _activateSignal;
     FlyoutWindow? _flyout;
     SettingsWindow? _settings;
     AboutWindow? _about;
@@ -59,9 +60,16 @@ public partial class App : Application
         _mutex = new Mutex(true, @"Local\OnShow.SingleInstance", out var fresh);
         if (!fresh)
         {
+            // 已有实例在运行(如点击固定在任务栏的图标再次启动):通知其显示主面板后退出
+            try { EventWaitHandle.OpenExisting(@"Local\OnShow.Activate").Set(); } catch { /* 首实例尚未就绪等场景 */ }
             Shutdown(0);
             return;
         }
+        _activateSignal = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\OnShow.Activate");
+        ThreadPool.RegisterWaitForSingleObject(
+            _activateSignal,
+            (_, _) => Dispatcher.BeginInvoke(() => { Log.Info("第二实例请求唤起主面板"); Widget?.ShowWidget(); }),
+            null, -1, executeOnlyOnce: false);
 
         DispatcherUnhandledException += (_, args) =>
         {
@@ -330,6 +338,7 @@ public partial class App : Application
     void ShowFlyout()
     {
         if (!Config.Window.FlyoutEnabled || Tray is null || TrayMenuOpen) return;
+        if (_flyout is { IsVisible: true }) return;   // 已显示:不重弹,避免闪烁
         _flyout ??= new FlyoutWindow();
         _flyout.ShowNear(Tray.IconRectOrCursor());
     }
@@ -365,6 +374,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         SaveConfig();
+        _activateSignal?.Dispose();
         _mutex?.Dispose();
         base.OnExit(e);
     }

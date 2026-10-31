@@ -110,7 +110,7 @@ tools/
 
 - **应用内反馈**(推荐):托盘右键菜单 →「反馈」,支持文字 + 截图,自动附带版本/系统信息,一键跳转 GitHub Issue(截图已放入剪贴板,Ctrl+V 即可粘贴)
 - **GitHub Issues**:直接到 [Issues](https://github.com/BobHuang666/OnShow/issues) 新建,建议附上 `%APPDATA%\OnShow\logs` 中的相关日志片段
-- **邮件**(无 GitHub 账号时):202311109047@mail.bnu.edu.cn
+- **邮件**(无 GitHub 账号时):bobhuang666@foxmail.com
 
 ⚠️ 反馈时请注意脱敏:不要粘贴 `tokens.dat`,日志片段中如含 Cookie / 账户信息请先行删除。
 

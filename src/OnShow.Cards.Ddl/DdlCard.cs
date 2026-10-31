@@ -28,6 +28,7 @@ public sealed class DdlCard : ICard
         _host = host;
         _items = Json.Load<List<DdlItem>>(DataFile);
         _state = host.State.Get<DdlState>("ddl", new DdlState());
+        MigrateOrder();
         Rebuild();
         _timer = new System.Threading.Timer(_ => Tick(), null, 1000, 1000);
         Log.Info($"DDL 卡加载:{_items.Count} 条");
@@ -73,7 +74,12 @@ public sealed class DdlCard : ICard
         lock (_gate)
         {
             var idx = _items.FindIndex(i => i.Id == item.Id);
-            if (idx >= 0) _items[idx] = item; else _items.Add(item);
+            if (idx >= 0) _items[idx] = item;
+            else
+            {
+                if (item.Order == 0) item.Order = _items.Count == 0 ? 0 : _items.Max(i => i.Order) + 1;
+                _items.Add(item);
+            }
             _state.Fired.Remove(item.Id);   // 截止时间可能被修改,重置提醒
             Persist();
             Rebuild();
@@ -110,6 +116,22 @@ public sealed class DdlCard : ICard
         {
             _items = Json.Load<List<DdlItem>>(DataFile);
             _state = _host.State.Get<DdlState>("ddl", new DdlState());
+            MigrateOrder();
+            Rebuild();
+        }
+    }
+
+    /// <summary>设置页拖拽排序:按给定 id 顺序重写 Order 并落盘。</summary>
+    public void Reorder(IReadOnlyList<string> orderedIds)
+    {
+        lock (_gate)
+        {
+            for (var i = 0; i < orderedIds.Count; i++)
+            {
+                var item = _items.FirstOrDefault(x => x.Id == orderedIds[i]);
+                if (item is not null) item.Order = i;
+            }
+            Persist();
             Rebuild();
         }
     }
@@ -121,11 +143,21 @@ public sealed class DdlCard : ICard
         var now = DateTime.Now;
         _vms = _items
             .OrderBy(i => i.Done)
+            .ThenBy(i => i.Order)
             .ThenBy(i => i.Due)
             .Select(i => new DdlItemVm { Item = i })
             .ToList();
         foreach (var vm in _vms) vm.Update(now);
         ViewModelChanged?.Invoke();
+    }
+
+    /// <summary>旧数据迁移:全部 Order 均为 0 时,按原默认排序(完成态+截止时间)初始化排序号。</summary>
+    void MigrateOrder()
+    {
+        if (_items.Count == 0 || _items.Any(i => i.Order != 0)) return;
+        var ordered = _items.OrderBy(i => i.Done).ThenBy(i => i.Due).ToList();
+        for (var i = 0; i < ordered.Count; i++) ordered[i].Order = i;
+        Persist();
     }
 
     void Persist() => Json.Save(DataFile, _items);

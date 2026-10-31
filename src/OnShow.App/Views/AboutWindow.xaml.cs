@@ -24,6 +24,8 @@ public partial class AboutWindow : Window
         if (e.ChangedButton == MouseButton.Left) DragMove();
     }
 
+    void OnCloseClick(object sender, MouseButtonEventArgs e) => Close();
+
     void OnNavChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!IsLoaded) return;

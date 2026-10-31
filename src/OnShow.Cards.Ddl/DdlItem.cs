@@ -13,4 +13,7 @@ public class DdlItem
 
     public string Note { get; set; } = "";
     public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+    /// <summary>手动排序号(设置页拖拽调整);0 表示未初始化,按原默认排序迁移。</summary>
+    public int Order { get; set; }
 }

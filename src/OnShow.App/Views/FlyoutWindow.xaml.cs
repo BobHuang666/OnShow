@@ -12,6 +12,7 @@ public partial class FlyoutWindow : Window
     readonly GlanceVm _vm = new();
     readonly DispatcherTimer _closeTimer;
     Rect _iconRectPhysical;
+    int _outsideStreak;
 
     public FlyoutWindow()
     {
@@ -40,13 +41,20 @@ public partial class FlyoutWindow : Window
         left = Math.Min(Math.Max(left, work.Left + 8), work.Right - Width - 8);
         if (top < work.Top + 8) top = logical.Bottom + 8;   // 图标在顶部(任务栏上置)时向下弹
 
-        Left = left;
-        Top = top;
-
         _vm.Update(App.Instance.DdlCard, App.Instance.TokenCard);
-        Left = left;
-        Top = top;
-        if (!IsVisible) Show();          // 已显示时仅跟随位置,重复 Show 会导致闪烁
+
+        if (!IsVisible)
+        {
+            Left = left;
+            Top = top;
+            Show();
+        }
+        else if (Math.Abs(Left - left) > 4 || Math.Abs(Top - top) > 4)
+        {
+            // 图标矩形测量抖动会导致窗口跳动;仅在偏移明显时才跟随
+            Left = left;
+            Top = top;
+        }
         _closeTimer.Start();
     }
 
@@ -71,11 +79,18 @@ public partial class FlyoutWindow : Window
         flyout.Transform(m);
         var icon = Rect.Transform(_iconRectPhysical, m);
 
-        // 图标 ∪ 快览 整体外扩 8 逻辑像素:覆盖两者之间的空隙,避免"关了又开"的循环闪烁
+        // 图标 ∪ 快览 整体外扩 10 逻辑像素:覆盖两者之间的空隙,避免"关了又开"的循环闪烁
         var keep = Rect.Union(flyout, icon);
-        keep.Inflate(8, 8);
-        if (keep.Contains(cursor)) return;
+        keep.Inflate(10, 10);
+        if (keep.Contains(cursor))
+        {
+            _outsideStreak = 0;
+            return;
+        }
 
+        // 连续两轮(约 400ms)都在外面才收起,过滤瞬时划出的抖动
+        if (++_outsideStreak < 2) return;
+        _outsideStreak = 0;
         Dismiss();
     }
 }

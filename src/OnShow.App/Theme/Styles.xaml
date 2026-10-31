@@ -24,6 +24,7 @@
     <SolidColorBrush x:Key="BrushInputBg" Color="#24FFFFFF"/>
     <SolidColorBrush x:Key="BrushBtnBg" Color="#24FFFFFF"/>
     <SolidColorBrush x:Key="BrushBtnBgHover" Color="#38FFFFFF"/>
+    <SolidColorBrush x:Key="BrushTokenTrack" Color="#1FFFFFFF"/>
 
     <!-- ================= 基础控件 ================= -->
 
@@ -276,7 +277,8 @@
                                               Background="Transparent" Cursor="Hand">
                                     <RepeatButton.Template>
                                         <ControlTemplate TargetType="RepeatButton">
-                                            <Border Background="Transparent" Height="20"/>
+                                            <Border Background="{StaticResource BrushAccent}" Height="4"
+                                                    CornerRadius="2" VerticalAlignment="Center"/>
                                         </ControlTemplate>
                                     </RepeatButton.Template>
                                 </RepeatButton>
@@ -315,6 +317,131 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ================= 细滚动条:贴边细条,hover 略变粗 ================= -->
+    <Style TargetType="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="7"/>
+        <Setter Property="MinWidth" Value="7"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageUpCommand" Focusable="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="ScrollBar.PageDownCommand" Focusable="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Background="Transparent"/>
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Focusable="False">
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border x:Name="thumb" Background="#2EFFFFFF"
+                                                    CornerRadius="3.5" Margin="1"/>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="thumb" Property="Background" Value="#55FFFFFF"/>
+                                                </Trigger>
+                                                <Trigger Property="IsDragging" Value="True">
+                                                    <Setter TargetName="thumb" Property="Background" Value="{StaticResource BrushAccent}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Width" Value="10"/>
+                            <Setter Property="MinWidth" Value="10"/>
+                        </Trigger>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter Property="Width" Value="Auto"/>
+                            <Setter Property="MinWidth" Value="0"/>
+                            <Setter Property="Height" Value="7"/>
+                            <Setter Property="MinHeight" Value="7"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="Orientation" Value="Horizontal"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <MultiTrigger.Setters>
+                                <Setter Property="Height" Value="10"/>
+                                <Setter Property="MinHeight" Value="10"/>
+                            </MultiTrigger.Setters>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid Background="Transparent">
+                                <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                    <Track.DecreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageLeftCommand" Focusable="False">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate TargetType="RepeatButton">
+                                                    <Border Background="Transparent"/>
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.DecreaseRepeatButton>
+                                    <Track.IncreaseRepeatButton>
+                                        <RepeatButton Command="ScrollBar.PageRightCommand" Focusable="False">
+                                            <RepeatButton.Template>
+                                                <ControlTemplate TargetType="RepeatButton">
+                                                    <Border Background="Transparent"/>
+                                                </ControlTemplate>
+                                            </RepeatButton.Template>
+                                        </RepeatButton>
+                                    </Track.IncreaseRepeatButton>
+                                    <Track.Thumb>
+                                        <Thumb Focusable="False">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border x:Name="thumb" Background="#2EFFFFFF"
+                                                            CornerRadius="3.5" Margin="1"/>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="thumb" Property="Background" Value="#55FFFFFF"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsDragging" Value="True">
+                                                            <Setter TargetName="thumb" Property="Background" Value="{StaticResource BrushAccent}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="ListBox">
@@ -452,33 +579,33 @@
 
     <!-- ================= Widget 专用 ================= -->
     <Style x:Key="IconBtn" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource BrushFg2}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushFg2}"/>
         <Setter Property="FontSize" Value="13"/>
         <Setter Property="Margin" Value="7,0"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{StaticResource BrushFg1}"/>
+                <Setter Property="Foreground" Value="{DynamicResource BrushFg1}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="RowBorder" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BrushRow}"/>
+        <Setter Property="Background" Value="{DynamicResource BrushRow}"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="10,8"/>
         <Setter Property="Margin" Value="0,0,0,6"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{StaticResource BrushRowHover}"/>
+                <Setter Property="Background" Value="{DynamicResource BrushRowHover}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="SectionTitle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{StaticResource BrushFg2}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushFg2}"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
@@ -493,9 +620,9 @@
 
     <Style x:Key="TokenBar" TargetType="ProgressBar">
         <Setter Property="Height" Value="4"/>
-        <Setter Property="Background" Value="#1FFFFFFF"/>
+        <Setter Property="Background" Value="{DynamicResource BrushTokenTrack}"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Foreground" Value="{StaticResource BrushAccent}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushAccent}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">

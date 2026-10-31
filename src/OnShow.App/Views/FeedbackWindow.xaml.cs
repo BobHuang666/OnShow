@@ -116,15 +116,19 @@ public partial class FeedbackWindow : Window
                 copied.Add(dst);
             }
 
-            // 剪贴板:完整文字(备用)+ 首张图片(Ctrl+V 直接粘贴)+ 文件列表(多图拖拽)
+            // 剪贴板:完整文字(备用)+ 首张截图(PNG 流 + DIB 位图双格式,
+            // 模拟系统截图工具的标准组合,浏览器/GitHub 粘贴最可靠)
             var data = new DataObject();
             data.SetData(DataFormats.UnicodeText, title + "\n\n" + body);
             if (copied.Count > 0)
             {
+                var pngStream = new MemoryStream();
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(LoadBitmap(copied[0])));
+                encoder.Save(pngStream);
+                pngStream.Position = 0;
+                data.SetData("PNG", pngStream);
                 data.SetImage(LoadBitmap(copied[0]));
-                var files = new StringCollection();
-                files.AddRange(copied.ToArray());
-                data.SetFileDropList(files);
             }
             Clipboard.SetDataObject(data, true);
 

@@ -104,7 +104,11 @@
                     <Button Content="删除" Click="OnDdlDelete"/>
                 </StackPanel>
                 <ListBox x:Name="DdlManageList" Margin="0,0,0,8"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                         AllowDrop="True" Drop="OnListDrop"
+                         PreviewMouseLeftButtonDown="OnListMouseDown"
+                         PreviewMouseMove="OnListMouseMove"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ToolTip="按住条目上下拖动可排序">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="4,2">
@@ -135,7 +139,11 @@
                     <Button Content="立即刷新" Click="OnTokenRefresh"/>
                 </StackPanel>
                 <ListBox x:Name="AccountManageList" Margin="0,0,0,8"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                         AllowDrop="True" Drop="OnListDrop"
+                         PreviewMouseLeftButtonDown="OnListMouseDown"
+                         PreviewMouseMove="OnListMouseMove"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ToolTip="按住条目上下拖动可排序">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid Margin="4,2">
@@ -177,19 +185,24 @@
                                    Foreground="{StaticResource BrushAccent}" Margin="0,0,0,8"/>
                         <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
                                    Text="桌面常驻信息小部件:DDL 倒计时 + Token 集成监控。&#x0a;数据与配置保存在 %APPDATA%\OnShow,密钥经 DPAPI 加密;无任何遥测。"/>
-                        <CheckBox x:Name="AutoUpdateBox" Content="自动检查更新(每 24 小时静默检查一次)"
+                        <CheckBox x:Name="AutoUpdateBox" Content="自动检查更新(每 24 小时一次)"
                                   Margin="0,12,0,0" Checked="OnAutoUpdateChanged" Unchecked="OnAutoUpdateChanged"/>
                         <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                             <Button Content="检查更新" Style="{StaticResource BtnPrimary}" Click="OnCheckUpdate" Margin="0,0,9,0"/>
                             <Button Content="反馈问题" Click="OnFeedback" Margin="0,0,9,0"/>
                             <Button Content="更新日志 / 用户协议" Click="OnOpenAbout"/>
                         </StackPanel>
-                        <Label Content="下载加速镜像(仅加速安装包下载;SHA256 校验仍走 GitHub 官方;留空直连)" Margin="0,14,0,0"/>
-                        <TextBox x:Name="MirrorBox" Height="32" VerticalContentAlignment="Center"
+                        <Label Content="下载加速镜像" Margin="0,14,0,0"/>
+                        <TextBox x:Name="MirrorBox" Height="36" VerticalContentAlignment="Center"
                                  TextChanged="OnMirrorChanged"/>
                         <TextBlock FontSize="11" Foreground="{StaticResource BrushOver}" Margin="0,5,0,0"
                                    TextWrapping="Wrap"
-                                   Text="默认使用公共加速镜像;若失效可更换前缀或留空直连。镜像只加速下载,内容完整性由 SHA256 校验保证。"/>
+                                   Text="镜像只加速下载,完整性由 SHA256 校验保证;失效时更换前缀或留空直连。"/>
+                        <Label Content="面板背景" Margin="0,14,0,0"/>
+                        <WrapPanel x:Name="BgSwatches" Margin="0,2,0,0"/>
+                        <TextBlock FontSize="11" Foreground="{StaticResource BrushOver}" Margin="0,5,0,0"
+                                   TextWrapping="Wrap"
+                                   Text="浅色背景会自动切换为深色文字。"/>
                     </StackPanel>
                 </Border>
                 <Border Style="{StaticResource Card}">
@@ -197,7 +210,7 @@
                         <TextBlock Text="接口适配提示" FontSize="13" FontWeight="SemiBold"
                                    Foreground="{StaticResource BrushWarn}" Margin="0,0,0,8"/>
                         <TextBlock Foreground="{StaticResource BrushFg2}" TextWrapping="Wrap" LineHeight="20"
-                                   Text="智谱与讯飞为非公开文档接口,若「测试连接」失败,请用托盘菜单「反馈」把响应情况发给开发者以适配(注意脱敏)。"/>
+                                   Text="智谱与讯飞为非公开文档接口,「测试连接」失败时请通过反馈窗口告知响应情况,注意脱敏。"/>
                     </StackPanel>
                 </Border>
                 <Button Content="打开数据目录" HorizontalAlignment="Left" Click="OnOpenDataFolder"/>

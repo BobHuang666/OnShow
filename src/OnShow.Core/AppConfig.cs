@@ -39,6 +39,9 @@ public class AppConfig
     /// 仅 zip 安装包走镜像;SHA256 校验文件永远走官方,镜像无法篡改内容。
     /// </summary>
     public string? DownloadMirrorPrefix { get; set; } = "https://ghfast.top/";
+
+    /// <summary>主面板背景预设 key(见 WidgetTheme.Presets:Dark/Black/White/Gray/…)。</summary>
+    public string WidgetBackground { get; set; } = "Dark";
 }
 
 public class WindowConfig
